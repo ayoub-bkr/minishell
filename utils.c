@@ -8,9 +8,9 @@ int	ft_strcmp(char *s1, char *s2)
 
 	if (!s1 || !s2)
 		return (0);
-    st1 = (unsigned char *)s1;
+	st1 = (unsigned char *)s1;
 	st2 = (unsigned char *)s2;
-    i = 0;
+	i = 0;
 	while ((st1[i] || st2[i]))
 	{
 		if (st1[i] != st2[i])
@@ -19,6 +19,79 @@ int	ft_strcmp(char *s1, char *s2)
 	}
 	return (1);
 }
+
+int	ft_strlen(char *str)
+{
+	int	i;
+
+	i = 0;
+	while (str[i])
+		i++;
+	return (i);
+}
+
+char	*ft_strdup(char *s)
+{
+	int		i;
+	char	*m;
+
+	i = 0;
+	m = malloc(ft_strlen(s) + 1);
+	if (!m)
+		return (0);
+	while (s[i])
+	{
+		*(m + i) = s[i];
+		i++;
+	}
+	*(m + i) = '\0';
+	return (m);
+}
+
+char	*ft_substr(char *s, unsigned int start, size_t len)
+{
+	size_t	i;
+	char	*m;
+
+	i = 0;
+	if (!s)
+		return (NULL);
+	if (ft_strlen(s) < start)
+		return (ft_strdup(""));
+	if (ft_strlen(s) - start < len)
+		len = ft_strlen(s) - start;
+	m = (char *) malloc(len + 1);
+	if (!m)
+		return (0);
+	while (i < len)
+	{
+		m[i] = s[start + i];
+		i++;
+	}
+	m[i] = '\0';
+	return (m);
+}
+
+// void	ft_lstaddback(t_line **head, char *new)
+// {
+// 	t_line	*m;
+// 	t_line	*tmp;
+
+// 	m = malloc(sizeof(t_line));
+// 	if (!m)
+// 		return ;
+// 	if (!*head)
+// 		*head = m;
+// 	else
+// 	{
+// 		tmp = *head;
+// 		while ((*tmp)->next)
+// 			tmp = &(*tmp)->next;
+// 		(*tmp)->next = m;
+// 	}
+// 	m->data = new;
+// 	m->next = NULL;
+// }
 
 // int main(int ac, char **av)
 // {

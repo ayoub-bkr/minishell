@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-void    echo()
-{
-    ft_putstr();
-}
+// void    echo(char *str)
+// {
+//     ft_putstr(str);
+// }
