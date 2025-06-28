@@ -4,10 +4,13 @@
 #include <readline/history.h>
 #include <stdlib.h>
 
-typedef struct  s_line {
-    char    *data;
-    struct s_line   *next;
-}           t_line;
+typedef struct  s_data {
+    char            *varenv;
+    struct s_data   *next;
+}                   t_data;
 
-int	ft_strcmp(char *s1, char *s2);
+void    cmd_env(t_data *cmds);
+void    ft_lstaddback(t_data **head, char *var);
+int	ft_strncmp(char *s1, char *s2, int n);
+void	ft_putstr(char *str);
 void    echo(char *str);

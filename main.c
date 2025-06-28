@@ -1,36 +1,28 @@
 #include "minishell.h"
 
-// void	tmp_parcing(t_line **head, char *str)
-// {
-// 	int	i;
-
-// 	i = 0;
-// 	if (ft_strncmp(str, "echo", 4))
-// 		ft_lstaddback(head, )
-// }
-
 int	main(int ac, char **av, char **envp)
 {
 	char	*input;
-	t_line	*line;
+	t_data	*cmds;
 
-	int i = 0;
-	while (envp[i])
-	{
-		printf("%s\n", envp[i]);
-		i++;
-	}
+	cmds = malloc(sizeof(t_data));
+	while(*envp)
+		ft_lstaddback(&cmds, *envp++);
 	while (1)
 	{
 		input = readline("minishell$");
 		if (!input)
 			break ;
-		if (ft_strcmp(input, "echo -n"))
+		if (ft_strncmp(input, "env", 3))
+			cmd_env(cmds);
+		else if (ft_strncmp(input, "echo -n ", 8))
+			ft_putstr(&input[8]);
+		else if (ft_strncmp(input, "echo ", 5))
 		{
-			
+			ft_putstr(&input[5]);
+			write(1, "\n", 1);
 		}
-			printf("yes\n");
-		else
-			printf("no\n");
+		else if (ft_strncmp(input, "export ", 7))
+			ft_lstaddback(&cmds, &input[7]);
 	}
 }
