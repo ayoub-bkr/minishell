@@ -9,8 +9,10 @@ typedef struct  s_data {
     struct s_data   *next;
 }                   t_data;
 
+//builtins.c
 void    cmd_env(t_data *cmds);
 void    ft_lstaddback(t_data **head, char *var);
+
+//utils.c
 int	ft_strncmp(char *s1, char *s2, int n);
 void	ft_putstr(char *str);
-void    echo(char *str);
