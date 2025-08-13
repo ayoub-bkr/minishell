@@ -1,5 +1,19 @@
 #include "minishell.h"
 
+int	equal_sign(char *str)
+{
+	int	i;
+
+	i = 0;
+	while (str[i])
+	{
+		if (str[i] == '=')
+			return (1);
+		i++;
+	}
+	return (0);
+}
+
 void    cmd_env(t_data *cmds)
 {
 	t_data *tmp;
@@ -7,8 +21,11 @@ void    cmd_env(t_data *cmds)
 	tmp = cmds;
 	while (tmp)
 	{
-		ft_putstr(tmp->varenv);
-        write(1, "\n", 1);
+		if (equal_sign(tmp->varenv))
+		{
+			ft_putstr(tmp->varenv);
+			write(1, "\n", 1);
+		}
 		tmp = tmp->next;
 	}
 }
@@ -34,22 +51,34 @@ void	ft_lstaddback(t_data **head, char *var)
 	m->next = NULL;
 }
 
-void	ft_lstrmvback(t_data **head)
+void	ft_lstremove(t_data **head, char *str)
 {
 	t_data	*tmp;
-	t_data	*prev;
+	t_data	*freeing;
 
-	if (!*head)
-		return ;
 	tmp = *head;
+	if (ft_strcmp(tmp->varenv, str))
+	{
+		freeing = tmp;
+		*head = tmp->next;
+		free(freeing);
+		return ;
+	}
 	while (tmp->next)
 	{
-		prev = tmp;
-		tmp = tmp->next;
+		if (ft_strcmp(tmp->next->varenv, str) == 2)
+		{
+			freeing = tmp->next;
+			tmp->next = tmp->next->next;
+			free(freeing);
+			return ;
+		}
+		else
+			tmp = tmp->next;
 	}
-	free(tmp);
-	prev->next = NULL;
 }
+
+
 
 // int main()
 // {
@@ -64,9 +93,8 @@ void	ft_lstrmvback(t_data **head)
 // 	node1->next = node2;
 // 	node2->next = node3;
 // 	node3->next = NULL;
-	
 // 	ft_lstaddback(&node1, "fourth");
-// 	ft_lstrmvback(&node1);
+// 	ft_lstremove(&node1, "first");
 // 	t_data	*tmp;
 // 	tmp = node1;
 // 	while (tmp)

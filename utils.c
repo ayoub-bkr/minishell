@@ -1,5 +1,30 @@
 #include "minishell.h"
 
+int	ft_strcmp(char *s1, char *s2)
+{
+    int             i;
+	unsigned char	*st1;
+	unsigned char	*st2;
+
+	if (!s1 || !s2)
+		return (0);
+	st1 = (unsigned char *)s1;
+	st2 = (unsigned char *)s2;
+	i = 0;
+	while ((st1[i] || st2[i]))
+	{
+		if (st1[i] != st2[i])
+		{
+			if (st1[i] == '=' && !st2[i])
+				return (2);
+			else
+				return (0);
+		}
+		i++;
+	}
+	return (1);
+}
+
 int	ft_strncmp(char *s1, char *s2, int n)
 {
     int             i;
@@ -20,6 +45,25 @@ int	ft_strncmp(char *s1, char *s2, int n)
 	return (1);
 }
 
+void	ft_putstr(char *str)
+{
+	int	i;
+	
+	i = 0;
+	while (str[i])
+		write(1, &str[i++], 1);
+}
+
+void	ft_putstr_nl(char *str)
+{
+	int	i;
+	
+	i = 0;
+	while (str[i])
+		write(1, &str[i++], 1);
+	write(1, "\n", 1);
+}
+
 int	ft_strlen(char *str)
 {
 	int	i;
@@ -28,15 +72,6 @@ int	ft_strlen(char *str)
 	while (str[i])
 		i++;
 	return (i);
-}
-
-void	ft_putstr(char *str)
-{
-	int	i;
-
-	i = 0;
-	while (str[i])
-		write(1, &str[i++], 1);
 }
 
 char	*ft_strdup(char *s)
@@ -55,6 +90,20 @@ char	*ft_strdup(char *s)
 	}
 	*(m + i) = '\0';
 	return (m);
+}
+
+int		ft_strchr(char *str, char c)
+{
+	int i;
+
+	i = 0;
+	while(str[i])
+	{
+		if (str[i] == c)
+			return (1);
+		i++;
+	}
+	return (0);
 }
 
 char	*ft_substr(char *s, unsigned int start, size_t len)
@@ -81,28 +130,7 @@ char	*ft_substr(char *s, unsigned int start, size_t len)
 	return (m);
 }
 
-// void	ft_lstaddback(t_line **head, char *new)
-// {
-// 	t_line	*m;
-// 	t_line	*tmp;
-
-// 	m = malloc(sizeof(t_line));
-// 	if (!m)
-// 		return ;
-// 	if (!*head)
-// 		*head = m;
-// 	else
-// 	{
-// 		tmp = *head;
-// 		while ((*tmp)->next)
-// 			tmp = &(*tmp)->next;
-// 		(*tmp)->next = m;
-// 	}
-// 	m->data = new;
-// 	m->next = NULL;
-// }
-
 // int main(int ac, char **av)
 // {
-//     printf("%d", ft_strncmp(av[1], av[2], 4));
+//     printf("%d", ft_strcmp(av[1], av[2]));
 // }
