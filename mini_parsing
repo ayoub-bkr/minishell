@@ -1,0 +1,38 @@
+each node contains:
+
+Command name (e.g., "echo")
+Arguments (array of strings, e.g., ["echo", "Hello", NULL])
+Redirections (input/output files, append flags, here-docs)
+Pipe connections (indicates if the command output should go to the next command)
+
+typedef struct s_redir {
+    char *file;
+    int type; // 0=input, 1=output, 2=append, 3=heredoc
+    struct s_redir *next;
+} t_redir;
+
+typedef struct s_cmd {
+    char **args;        // command + arguments
+    t_redir *redir;     // linked list of redirections
+    int pipe_out;       // 1 if output is piped to next command
+    struct s_cmd *next; // next command in pipeline
+} t_cmd;
+
+If the user enters:
+cat file.txt | grep hello > out.txt
+
+The linked list would look like:
+Node 1 (cat file.txt)
+args = ["cat", "file.txt", NULL]
+redir = NULL
+pipe_out = 1 (because it pipes to next command)
+
+Node 2 (grep hello > out.txt)
+args = ["grep", "hello", NULL]
+redir = [file="out.txt", type=output]
+pipe_out = 0
+
+This structure makes it easy for the execution step to know:
+Which commands to run
+Where to redirect input/output
+How to chain commands with pipes

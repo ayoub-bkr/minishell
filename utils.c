@@ -25,45 +25,6 @@ int	ft_strcmp(char *s1, char *s2)
 	return (1);
 }
 
-int	ft_strncmp(char *s1, char *s2, int n)
-{
-    int             i;
-	unsigned char	*st1;
-	unsigned char	*st2;
-
-	if (!s1 || !s2)
-		return (0);
-	st1 = (unsigned char *)s1;
-	st2 = (unsigned char *)s2;
-	i = 0;
-	while ((st1[i] || st2[i]) && i < n)
-	{
-		if (st1[i] != st2[i])
-			return (0);
-		i++;
-	}
-	return (1);
-}
-
-void	ft_putstr(char *str)
-{
-	int	i;
-	
-	i = 0;
-	while (str[i])
-		write(1, &str[i++], 1);
-}
-
-void	ft_putstr_nl(char *str)
-{
-	int	i;
-	
-	i = 0;
-	while (str[i])
-		write(1, &str[i++], 1);
-	write(1, "\n", 1);
-}
-
 int	ft_strlen(char *str)
 {
 	int	i;
@@ -106,9 +67,9 @@ int		ft_strchr(char *str, char c)
 	return (0);
 }
 
-char	*ft_substr(char *s, unsigned int start, size_t len)
+char	*ft_substr(char *s, int start, int len)
 {
-	size_t	i;
+	int		i;
 	char	*m;
 
 	i = 0;
@@ -130,7 +91,92 @@ char	*ft_substr(char *s, unsigned int start, size_t len)
 	return (m);
 }
 
-// int main(int ac, char **av)
-// {
-//     printf("%d", ft_strcmp(av[1], av[2]));
-// }
+char	*ft_strjoin(char *s1, char *s2)
+{
+	int		i;
+	int		j;
+	char	*m;
+
+	i = 0;
+	j = 0;
+	if (!s1 && !s2)
+		return (NULL);
+	else if (!s1)
+		return (ft_strdup(s2));
+	else if (!s2)
+		return (ft_strdup(s1));
+	m = (char *)malloc (ft_strlen(s1) + ft_strlen(s2) + 1);
+	if (!m)
+		return (0);
+	while (s1[i])
+	{
+		m[i] = s1[i];
+		i++;
+	}
+	while (s2[j])
+		m[i++] = s2[j++];
+	m[i] = '\0';
+	return (m);
+}
+
+static int	words(char *s, char c)
+{
+	int	i;
+	int	count;
+
+	i = 0;
+	count = 0;
+	while (s[i] && s[i] == c)
+		i++;
+	while (s[i])
+	{
+		if (s[i] != c && (s[i + 1] == c || s[i + 1] == '\0'))
+			count++;
+		i++;
+	}
+	return (count);
+}
+
+static char	**freeing(char **m, int i)
+{
+	while (i-- > 0)
+		free(m[i]);
+	free(m);
+	return (NULL);
+}
+
+static char	*skip(char *s, char c)
+{
+	while (*s == c)
+		s++;
+	return (s);
+}
+
+char	**ft_split(char *s, char c)
+{
+	int		i;
+	int		len;
+	char	**m;
+
+	i = 0;
+	if (!s)
+		return (NULL);
+	m = malloc(sizeof(char *) * (words(s, c) + 1));
+	if (!m)
+		return (NULL);
+	while (*s)
+	{
+		len = 0;
+		s = skip(s, c);
+		if (*s == '\0')
+			break ;
+		while (s[len] != c && s[len])
+			len++;
+		m[i] = ft_substr(s, 0, len);
+		if (m[i++] == NULL)
+			return (freeing (m, i));
+		s += len;
+	}
+	m[i] = NULL;
+	return (m);
+}

@@ -1,38 +1,5 @@
 #include "minishell.h"
 
-int	exp_equal(char *input)
-{
-	while (*input)
-	{
-		if (*input == '=')
-			return (1);
-		input++;
-	}
-	return (0);
-}
-
-int	exp_already(char *input, t_data *cmds)
-{
-	int		i;
-	t_data	*tmp;
-
-	tmp = cmds;
-	while (tmp)
-	{
-		i = 0;
-		while (input[i] && input[i] != '=')
-		{
-			if (input[i] != tmp->varenv[i])
-				break ;
-			i++;
-		}
-		if (input[i] == '=' && tmp->varenv[i] == '=')
-			return (1);
-		tmp = tmp->next;
-	}
-	return (0);
-}
-
 void	ctrl_c(int s)
 {
 	(void)s;
@@ -42,9 +9,9 @@ void	ctrl_c(int s)
 	rl_redisplay();
 }
 
-void	ft_lstfree(t_data **head)
+void	ft_lstfree(t_env **head)
 {
-	t_data	*tmp;
+	t_env	*tmp;
 
 	while (*head)
 	{
@@ -54,30 +21,30 @@ void	ft_lstfree(t_data **head)
 	}
 }
 
-char	*ft_lstgetvar(t_data *cmds, char *var)
+char	*ft_lstgetvar(t_env *command, char *str)
 {
 	int	i;
 
-	while (cmds)
+	while (command)
 	{
 		i = 0;
-		while (cmds->varenv[i] == var[i] && var[i])
+		while (command->var[i] == str[i] && str[i])
 			i++;
-		if (cmds->varenv[i] == '=')
-			return (&cmds->varenv[i + 1]);
-		cmds = cmds->next;
+		if (command->var[i] == '=')
+			return (&command->var[i + 1]);
+		command = command->next;
 	}
 	return ("");
 }
 
-char	*replace_variable(t_data *cmds, char *input)
+char	*replace_variable(t_env *env_vars, char *input)
 {
 	int	i;
 	int	j;
 	char	*var;
 	char	*new;
 
-	new = malloc()
+	new = "";
 	i = 0;
 	while (input[i] && input[i] != '$')
 		i++;
@@ -86,55 +53,53 @@ char	*replace_variable(t_data *cmds, char *input)
 	{
 		while (input[i + j] != ' ' && input[i + j])
 			j++;
-		var = ft_lstgetvar(cmds, ft_substr(input, i + 1, j));
+		var = ft_lstgetvar(env_vars, ft_substr(input, i + 1, j));
+		new = ft_strjoin(ft_substr(input, 0, i), var);
+		i += j;
+		j = i;
+		while (input[j])
+			j++;
+		new = ft_strjoin(new, ft_substr(input, i, j));
 	}
-	return (var);
+	return (new);
+}
+
+void	init(t_command **command, t_env **env_vars)
+{
+	char	*input;
+
+	input = readline("minishell$ ");
+	if (!input)
+	{
+		ft_lstfree(env_vars);
+		rl_clear_history();
+		write(1, "exit\n", 5);
+		exit(0);
+	}
+	else
+		add_history(input);
+	if (ft_strchr(input, '$'))
+		input = replace_variable(*env_vars, input);
+	(*command)->args = ft_split(input, ' ');
 }
 
 int	main(int ac, char **av, char **envp)
 {
-	char	*input;
-	t_data	*cmds = NULL;
-	char	cwd_buf[1024];
+	t_env		*env_vars;
+	t_command	*command;
 
 	if (ac != 1 && av[1])
 		return (0);
+	env_vars = NULL;
+	command = malloc(sizeof(t_command));
 	while(*envp)
-		ft_lstaddback(&cmds, *envp++);
+		ft_lstaddback(&env_vars, *envp++);
 	while (1)
 	{
 		signal(SIGINT, ctrl_c);
 		signal(SIGQUIT, SIG_IGN);
-		input = readline("minishell$ ");
-		if (!input)
-		{
-			ft_lstfree(&cmds);
-			rl_clear_history();
-			write(1, "exit\n", 5);
-			break ;
-		}
-		else
-			add_history(input);
-		if (ft_strchr(input, '$'))
-			input = replace_variable(cmds, input);
-		if (ft_strcmp(input, "env"))
-			cmd_env(cmds);
-		else if (ft_strncmp(input, "unset ", 6))
-			ft_lstremove(&cmds, &input[6]);
-		else if (ft_strncmp(input, "export ", 7) && exp_equal(&input[7]) && !exp_already(&input[7], cmds))
-			ft_lstaddback(&cmds, &input[7]);
-		else if (ft_strncmp(input, "echo -n ", 8))
-			ft_putstr(&input[8]);
-		else if (ft_strncmp(input, "echo ", 5))
-			ft_putstr_nl(&input[5]);
-		else if (ft_strncmp(input, "pwd", 4))
-			ft_putstr_nl(getcwd(cwd_buf, sizeof(cwd_buf)));
-		else if (ft_strncmp(input, "cd ", 3))
-			chdir(&input[3]);
-		else if (ft_strcmp(input, "exit"))
-		{
-			write(1, "exit\n", 5);
-			break ;
-		}
+		init(&command, &env_vars);
+		if (bi_checker(command->args[0]))
+			bi_handler(&command, &env_vars);
 	}
 }
