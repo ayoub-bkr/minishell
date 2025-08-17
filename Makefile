@@ -2,11 +2,11 @@ SRC = builtins.c main.c utils.c
 OBJ = $(SRC:.c=.o)
 
 NAME = minishell
-FLAGS = -Wall -Werror -Wextra -lreadline
+FLAGS = -Wall -Werror -Wextra
 CC = cc
 
 $(NAME): $(OBJ)
-	$(CC) $(FLAGS) $(OBJ) -o $(NAME)
+	$(CC) $(FLAGS) $(OBJ) -o $(NAME) -lreadline
 
 all: $(NAME)
 

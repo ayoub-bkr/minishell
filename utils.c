@@ -1,5 +1,20 @@
 #include "minishell.h"
 
+int	ft_lstcount(t_env *head)
+{
+	t_env *tmp;
+	int		i;
+
+	tmp = head;
+	i = 0;
+	while (tmp)
+	{
+		i++;
+		tmp = tmp->next;
+	}
+	return (i);
+}
+
 int	ft_strcmp(char *s1, char *s2)
 {
     int             i;

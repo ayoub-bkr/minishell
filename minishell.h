@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <limits.h>
 #include <signal.h>
+#include <sys/wait.h>
 
 typedef struct  s_env {
 	char            *var;
@@ -44,6 +45,7 @@ void	bi_handler(t_command **command, t_env **env_vars);
 int		bi_checker(char *command);
 
 //utils.c
+int		ft_lstcount(t_env *head);
 int		ft_strcmp(char *s1, char *s2);
 int		ft_strlen(char *str);
 char	*ft_strdup(char *s);

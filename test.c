@@ -1,6 +1,6 @@
-#include <unistd.h>
+#include "minishell.h"
 
-void	ft_putstrs(char **strs)
+void	ft_putstrs(char **strs, int nl)
 {
 	int	i;
 	int	j;
@@ -15,31 +15,61 @@ void	ft_putstrs(char **strs)
 	}
 }
 
-int	main(int ac, char **av)
+int	ft_lstcount(t_env *head)
 {
-	ft_putstrs(&av[1]);
+	t_env *tmp;
+	int		i;
+
+	tmp = head;
+	i = 0;
+	while (tmp)
+	{
+		i++;
+		tmp = tmp->next;
+	}
+	return (i);
 }
 
-// int main()
-// {
-// 	t_data *node1, *node2, *node3;
-// 	node1 = malloc(sizeof(t_data));
-// 	node1->varenv = "first";
-// 	node2 = malloc(sizeof(t_data));
-// 	node2->varenv = "second";
-// 	node3 = malloc(sizeof(t_data));
-// 	node3->varenv = "third";
+char	**env_filling(t_env *head)
+{
+	int		i;
+	t_env	*tmp;
+	char	**m;
+
+	i = 0;
+	tmp = head;
+	m = malloc(sizeof(char *) * (ft_lstcount(head) + 1));
+	while (tmp)
+	{
+		m[i++] = tmp->var;
+		tmp = tmp->next;
+	}
+	m[i] = NULL;
+	return (m);
+}	
+
+int main()
+{
+	t_env *node1, *node2, *node3;
+	node1 = malloc(sizeof(t_env));
+	node1->var = "first";
+	node2 = malloc(sizeof(t_env));
+	node2->var = "second";
+	node3 = malloc(sizeof(t_env));
+	node3->var = "third";
 	
-// 	node1->next = node2;
-// 	node2->next = node3;
-// 	node3->next = NULL;
-// 	ft_lstaddback(&node1, "fourth");
-// 	ft_lstremove(&node1, "first");
-// 	t_data	*tmp;
-// 	tmp = node1;
-// 	while (tmp)
-// 	{
-// 		printf("%s\n", tmp->varenv);
-// 		tmp = tmp->next;
-// 	}
-// }
+	node1->next = node2;
+	node2->next = node3;
+	node3->next = NULL;
+
+	char	**str;
+	str = env_filling(node1);
+	// t_env	*tmp;
+	// tmp = node1;
+	// while (tmp)
+	// {
+	// 	printf("%s\n", tmp->var);
+	// 	tmp = tmp->next;
+	// }
+	printf("%s", str[5]);
+}

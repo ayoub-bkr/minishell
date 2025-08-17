@@ -1,5 +1,41 @@
 #include "minishell.h"
 
+char	**env_filling(t_env *head)
+{
+	int		i;
+	t_env	*tmp;
+	char	**m;
+
+	i = 0;
+	tmp = head;
+	m = malloc(sizeof(char *) * (ft_lstcount(head) + 1));
+	while (tmp)
+	{
+		m[i++] = tmp->var;
+		tmp = tmp->next;
+	}
+	m[i] = NULL;
+	return (m);
+}
+
+void	ext_handler(t_command *command, t_env *env_vars)
+{
+	pid_t	pid;
+	char	**new_envp;
+	char	*path;
+
+	pid	= fork();
+	if (!pid)
+	{
+		path = ft_strjoin("/bin/", command->args[0]);
+		new_envp = env_filling(env_vars);
+		execve(path, command->args, new_envp);
+		exit(1);
+	}
+	else if (pid > 0)
+		waitpid(pid, NULL, 0);
+}
+
 void	ctrl_c(int s)
 {
 	(void)s;
@@ -99,7 +135,10 @@ int	main(int ac, char **av, char **envp)
 		signal(SIGINT, ctrl_c);
 		signal(SIGQUIT, SIG_IGN);
 		init(&command, &env_vars);
+		
 		if (bi_checker(command->args[0]))
 			bi_handler(&command, &env_vars);
+		else if (!access(ft_strjoin("/bin/", command->args[0]), F_OK))
+			ext_handler(command, env_vars);
 	}
 }
