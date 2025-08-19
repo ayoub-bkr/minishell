@@ -1,44 +1,5 @@
 #include "minishell.h"
 
-void	piping(t_command *command)
-{
-	int		fd[2];
-	pid_t	pid;
-	int		prev_fd;
-
-	prev_fd = -1;
-	while (command)
-	{
-		pid = fork();
-		pipe(fd);
-		if (pid == 0)
-		{
-			if (prev_fd != -1)
-			{
-				dup2(prev_fd, STDIN_FILENO);
-				close(prev_fd);
-			}
-			if (command->next)
-			{
-				dup2(fd[1], STDOUT_FILENO);
-				close(fd[0]);
-				close(fd[1]);
-			}
-		}
-		else
-		{
-			if (prev_fd != -1)
-				close(prev_fd);
-			if (command->next)
-			{
-				close(fd[1]);
-				prev_fd = fd[0];
-			}
-		}
-		command = command->next;
-	}
-}
-
 char	**env_filling(t_env *head)
 {
 	int		i;
@@ -73,6 +34,76 @@ void	ext_handler(t_command *command, t_env *env_vars)
 	}
 	else if (pid > 0)
 		waitpid(pid, NULL, 0);
+}
+
+void	pipe_ext_handler(t_command *command, t_env *env_vars)
+{
+	char	**new_envp;
+	char	*path;
+
+		path = ft_strjoin("/bin/", command->args[0]);
+		new_envp = env_filling(env_vars);
+		execve(path, command->args, new_envp);
+		exit(1);
+}
+
+void	piping(t_command *command, t_env **env_vars)
+{
+	int		fd[2];
+	pid_t	pid;
+	int		prev_fd;
+
+	prev_fd = -1;
+	while (command)
+	{
+		if (command->next)
+		{
+			if (pipe(fd) == -1)
+			{
+				perror("pipe");
+				return ;
+			}
+		}
+		pid = fork();
+		if (pid == 0)
+		{
+			if (prev_fd != -1)
+			{
+				dup2(prev_fd, STDIN_FILENO);
+				close(prev_fd);
+			}
+			if (command->next)
+			{
+				close(fd[0]);
+				dup2(fd[1], STDOUT_FILENO);
+				close(fd[1]);
+			}
+			if (bi_checker(command->args[0]))
+			{
+				bi_handler(&command, env_vars);
+				exit(0);
+			}
+			else
+				pipe_ext_handler(command, *env_vars);
+		}
+		else
+		{
+			if (prev_fd != -1)
+				close(prev_fd);
+			if (command->next)
+			{
+				close(fd[1]);
+				prev_fd = fd[0];
+			}
+		}
+		command = command->next;
+	}
+	if (prev_fd != -1)
+		close(prev_fd);
+	// printf("DEBUG: About to wait for children\n");
+	while (wait(NULL) > 0);
+		// printf("DEBUG: Child process finished\n");
+	// printf("DEBUG: All children finished, returning from piping\n");
 }
 
 void	ctrl_c(int s)
@@ -139,10 +170,31 @@ char	*replace_variable(t_env *env_vars, char *input)
 	return (new);
 }
 
+void	cmd_lstaddback(t_command **head, t_command *new)
+{
+	t_command	*tmp;
+
+	if (!new)
+		return ;
+	new->pipe_out = 0;
+	new->next = NULL;
+	if (!*head)
+		*head = new;
+	else
+	{
+		tmp = *head;
+		while (tmp->next)
+			tmp = tmp->next;
+		tmp->next = new;
+		tmp->pipe_out = 1;
+	}
+}
+
 void	init(t_command **command, t_env **env_vars)
 {
 	char	*input;
-
+	char	**cmds;
+	int		i;
 	input = readline("minishell$ ");
 	if (!input)
 	{
@@ -155,7 +207,38 @@ void	init(t_command **command, t_env **env_vars)
 		add_history(input);
 	if (ft_strchr(input, '$'))
 		input = replace_variable(*env_vars, input);
-	(*command)->args = ft_split(input, ' ');
+	cmds = ft_split(input, '|');
+	i = 0;
+	while (cmds[i])
+	{
+		t_command	*new;
+	
+		new = malloc(sizeof(t_command));
+		if (!new)
+			exit(1);
+		new->args = ft_split(cmds[i], ' ');
+		new->next = NULL;
+		cmd_lstaddback(command, new);
+		i++;
+	}
+}
+
+void	cmd_freeing(t_command **command)
+{
+	t_command	*tmp;
+	int			i;
+
+	while (*command)
+	{
+		tmp = (*command)->next;
+		i = 0;
+		while ((*command)->args[i])
+			free((*command)->args[i++]);
+		free((*command)->args);
+		free(*command);
+		*command = tmp;
+	}
+	*command = NULL;
 }
 
 int	main(int ac, char **av, char **envp)
@@ -166,7 +249,7 @@ int	main(int ac, char **av, char **envp)
 	if (ac != 1 && av[1])
 		return (0);
 	env_vars = NULL;
-	command = malloc(sizeof(t_command));
+	command = NULL;
 	while(*envp)
 		ft_lstaddback(&env_vars, *envp++);
 	while (1)
@@ -174,11 +257,21 @@ int	main(int ac, char **av, char **envp)
 		signal(SIGINT, ctrl_c);
 		signal(SIGQUIT, SIG_IGN);
 		init(&command, &env_vars);
-		if (command->pipe_out && command->next)
-			piping(command);
-		else if (bi_checker(command->args[0]))
-			bi_handler(&command, &env_vars);
-		else if (!access(ft_strjoin("/bin/", command->args[0]), F_OK))
-			ext_handler(command, env_vars);
+		if (command->next)
+		{
+			// printf("DEBUG: Calling piping function\n");
+			piping(command, &env_vars);
+			// printf("DEBUG: Returned from piping function\n");
+		}
+		else
+		{
+			// printf("DEBUG: No piping needed\n");
+			if (bi_checker(command->args[0]))
+				bi_handler(&command, &env_vars);
+			else if (!access(ft_strjoin("/bin/", command->args[0]), F_OK))
+				ext_handler(command, env_vars);
+		}
+		cmd_freeing(&command);
+		// printf("DEBUG: About to loop again\n");
 	}
 }

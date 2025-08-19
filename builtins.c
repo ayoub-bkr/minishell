@@ -144,7 +144,6 @@ void	bi_handler(t_command **command, t_env **env_vars)
 {
 	char	cwd_buf[1024];
 
-	// printf("%s\n", (*command)->args[0]);
 	if (ft_strcmp((*command)->args[0], "export") && exp_equal((*command)->args[1]) && !exp_already((*command)->args[1], *env_vars))
 		ft_lstaddback(env_vars, (*command)->args[1]);
 	else if (ft_strcmp((*command)->args[0], "env"))
