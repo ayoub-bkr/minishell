@@ -1,5 +1,44 @@
 #include "minishell.h"
 
+void	piping(t_command *command)
+{
+	int		fd[2];
+	pid_t	pid;
+	int		prev_fd;
+
+	prev_fd = -1;
+	while (command)
+	{
+		pid = fork();
+		pipe(fd);
+		if (pid == 0)
+		{
+			if (prev_fd != -1)
+			{
+				dup2(prev_fd, STDIN_FILENO);
+				close(prev_fd);
+			}
+			if (command->next)
+			{
+				dup2(fd[1], STDOUT_FILENO);
+				close(fd[0]);
+				close(fd[1]);
+			}
+		}
+		else
+		{
+			if (prev_fd != -1)
+				close(prev_fd);
+			if (command->next)
+			{
+				close(fd[1]);
+				prev_fd = fd[0];
+			}
+		}
+		command = command->next;
+	}
+}
+
 char	**env_filling(t_env *head)
 {
 	int		i;
@@ -135,8 +174,9 @@ int	main(int ac, char **av, char **envp)
 		signal(SIGINT, ctrl_c);
 		signal(SIGQUIT, SIG_IGN);
 		init(&command, &env_vars);
-		
-		if (bi_checker(command->args[0]))
+		if (command->pipe_out && command->next)
+			piping(command);
+		else if (bi_checker(command->args[0]))
 			bi_handler(&command, &env_vars);
 		else if (!access(ft_strjoin("/bin/", command->args[0]), F_OK))
 			ext_handler(command, env_vars);
