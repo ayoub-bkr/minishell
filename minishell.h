@@ -6,6 +6,7 @@
 #include <limits.h>
 #include <signal.h>
 #include <sys/wait.h>
+#include <fcntl.h>
 
 typedef struct  s_env {
 	char            *var;
@@ -26,11 +27,22 @@ typedef struct s_command {
 } t_command;
 
 //main.c
+char	**env_filling(t_env *head);
+void	ext_handler(t_command *command, t_env *env_vars);
+void	pipe_ext_handler(t_command *command, t_env *env_vars);
+void	redirecting(t_redir *redir);
+void	piping(t_command *command, t_env **env_vars);
 void	ctrl_c(int s);
 void	ft_lstfree(t_env **head);
 char	*ft_lstgetvar(t_env *command, char *str);
 char	*replace_variable(t_env *env_vars, char *input);
+void	cmd_lstaddback(t_command **head, t_command *new);
+int		count_tokens(char **tokens);
+t_redir	*redir_new(char *file, int type);
+void	redir_addback(t_redir **head, t_redir *new);
+t_command	*parsing(char *cmd_str);
 void	init(t_command **command, t_env **env_vars);
+void	cmd_freeing(t_command **command);
 
 //builtins.c
 int		equal_sign(char *str);

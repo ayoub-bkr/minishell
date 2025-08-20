@@ -47,6 +47,49 @@ void	pipe_ext_handler(t_command *command, t_env *env_vars)
 		exit(1);
 }
 
+void redirecting(t_redir *redir)
+{
+    int fd;
+
+    while (redir)
+    {
+        if (redir->type == 0) // <
+        {
+            fd = open(redir->file, O_RDONLY);
+            if (fd < 0)
+            {
+                perror(redir->file);
+                exit(1);
+            }
+            dup2(fd, STDIN_FILENO);
+            close(fd);
+        }
+        else if (redir->type == 1) // >
+        {
+            fd = open(redir->file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+            if (fd < 0)
+            {
+                perror(redir->file);
+                exit(1);
+            }
+            dup2(fd, STDOUT_FILENO);
+            close(fd);
+        }
+        else if (redir->type == 2) // >>
+        {
+            fd = open(redir->file, O_WRONLY | O_CREAT | O_APPEND, 0644);
+            if (fd < 0)
+            {
+                perror(redir->file);
+                exit(1);
+            }
+            dup2(fd, STDOUT_FILENO);
+            close(fd);
+        }
+        redir = redir->next;
+    }
+}
+
 void	piping(t_command *command, t_env **env_vars)
 {
 	int		fd[2];
@@ -78,6 +121,7 @@ void	piping(t_command *command, t_env **env_vars)
 				dup2(fd[1], STDOUT_FILENO);
 				close(fd[1]);
 			}
+			redirecting(command->redir);
 			if (bi_checker(command->args[0]))
 			{
 				bi_handler(&command, env_vars);
@@ -190,6 +234,69 @@ void	cmd_lstaddback(t_command **head, t_command *new)
 	}
 }
 
+int	count_tokens(char **tokens)
+{
+	int i;
+
+	i = 0;
+	while (tokens[i])
+		i++;
+	return (i);
+}
+
+t_redir *redir_new(char *file, int type)
+{
+    t_redir *r = malloc(sizeof(t_redir));
+    if (!r)
+        return NULL;
+    r->file = file;
+    r->type = type;
+    r->next = NULL;
+    return r;
+}
+
+void redir_addback(t_redir **head, t_redir *new)
+{
+    t_redir *tmp;
+    if (!*head)
+        *head = new;
+    else
+    {
+        tmp = *head;
+        while (tmp->next)
+            tmp = tmp->next;
+        tmp->next = new;
+    }
+}
+
+t_command *parsing(char *cmd_str)
+{
+    t_command *cmd = malloc(sizeof(t_command));
+    int i = 0, j = 0;
+    char **tokens = ft_split(cmd_str, ' '); // split by space
+    cmd->args = malloc(sizeof(char *) * (count_tokens(tokens) + 1));
+    cmd->redir = NULL;
+    cmd->pipe_out = 0;
+    cmd->next = NULL;
+
+    while (tokens[i])
+    {
+        if (strcmp(tokens[i], "<") == 0 && tokens[i+1])
+            redir_addback(&cmd->redir, redir_new(ft_strdup(tokens[++i]), 0));
+        else if (strcmp(tokens[i], ">") == 0 && tokens[i+1])
+            redir_addback(&cmd->redir, redir_new(ft_strdup(tokens[++i]), 1));
+        else if (strcmp(tokens[i], ">>") == 0 && tokens[i+1])
+            redir_addback(&cmd->redir, redir_new(ft_strdup(tokens[++i]), 2));
+        else if (strcmp(tokens[i], "<<") == 0 && tokens[i+1])
+            redir_addback(&cmd->redir, redir_new(ft_strdup(tokens[++i]), 3));
+        else
+            cmd->args[j++] = ft_strdup(tokens[i]);
+        i++;
+    }
+    cmd->args[j] = NULL;
+    return cmd;
+}
+
 void	init(t_command **command, t_env **env_vars)
 {
 	char	*input;
@@ -213,10 +320,7 @@ void	init(t_command **command, t_env **env_vars)
 	{
 		t_command	*new;
 	
-		new = malloc(sizeof(t_command));
-		if (!new)
-			exit(1);
-		new->args = ft_split(cmds[i], ' ');
+		new = parsing(cmds[i]);
 		new->next = NULL;
 		cmd_lstaddback(command, new);
 		i++;
@@ -258,20 +362,14 @@ int	main(int ac, char **av, char **envp)
 		signal(SIGQUIT, SIG_IGN);
 		init(&command, &env_vars);
 		if (command->next)
-		{
-			// printf("DEBUG: Calling piping function\n");
 			piping(command, &env_vars);
-			// printf("DEBUG: Returned from piping function\n");
-		}
 		else
 		{
-			// printf("DEBUG: No piping needed\n");
 			if (bi_checker(command->args[0]))
 				bi_handler(&command, &env_vars);
 			else if (!access(ft_strjoin("/bin/", command->args[0]), F_OK))
 				ext_handler(command, env_vars);
 		}
 		cmd_freeing(&command);
-		// printf("DEBUG: About to loop again\n");
 	}
 }
