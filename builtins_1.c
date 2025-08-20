@@ -1,33 +1,5 @@
 #include "minishell.h"
 
-void	ft_putstr(char *str, int nl)
-{
-	int	i;
-
-	i = 0;
-	while (str[i])
-		write(1, &str[i++], 1);
-	if (nl)
-		write(1, "\n", 1);
-}
-
-void	ft_putstrs(char **strs, int nl)
-{
-	int	i;
-	int	j;
-
-	j = 0;
-	while (strs[j])
-	{
-		i = 0;
-		while (strs[j][i])
-			write(1, &strs[j][i++], 1);
-		j++;
-	}
-	if (nl)
-		write(1, "\n", 1);
-}
-
 int	exp_equal(char *input)
 {
 	if (!input)
@@ -63,4 +35,16 @@ int	exp_already(char *input, t_env *command)
 		tmp = tmp->next;
 	}
 	return (0);
+}
+
+void	exp_handler(t_command **command, t_env **env_vars)
+{
+	char	*tmp;
+
+	if (!exp_equal((*command)->args[1])
+		|| exp_already((*command)->args[1], *env_vars))
+		return ;
+	tmp = ft_strdup((*command)->args[1]);
+	if (tmp)
+		env_lstaddback(env_vars, tmp);
 }

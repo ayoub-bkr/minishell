@@ -30,10 +30,9 @@ typedef struct s_command
 }						t_command;
 
 //builtins_1.c
-void		ft_putstr(char *str, int nl);
-void		ft_putstrs(char **strs, int nl);
 int			exp_equal(char *input);
 int			exp_already(char *input, t_env *command);
+void		exp_handler(t_command **command, t_env **env_vars);
 
 //builtins_2.c
 void		env_printing(t_env *env_vars);
@@ -42,6 +41,8 @@ void		env_lstremove(t_env **head, char *str);
 void		env_lstaddback(t_env **head, char *str);
 
 //builtins_3.c
+void		ft_putstr(char *str, int nl);
+void		ft_putstrs(char **strs, int nl);
 void		bi_handler(t_command **command, t_env **env_vars);
 int			bi_checker(char *command);
 
