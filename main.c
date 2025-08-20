@@ -193,6 +193,8 @@ int	main(int ac, char **av, char **envp)
 		signal(SIGINT, ctrl_c);
 		signal(SIGQUIT, SIG_IGN);
 		init(&command, &env_vars);
+		if (!command)
+			continue;
 		if (command->next)
 			piping(command, &env_vars);
 		else
