@@ -1,4 +1,4 @@
-SRC = builtins.c main.c utils.c
+SRC = builtins_1.c builtins_2.c builtins_3.c main.c parsing.c utils_1.c utils_2.c
 OBJ = $(SRC:.c=.o)
 
 NAME = minishell

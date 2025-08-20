@@ -8,63 +8,72 @@
 #include <sys/wait.h>
 #include <fcntl.h>
 
-typedef struct  s_env {
-	char            *var;
-	struct s_env   *next;
-}                   t_env;
+typedef struct s_env
+{
+	char			*var;
+	struct s_env	*next;
+}					t_env;
 
-typedef struct s_redir {
-	char *file;
-	int type; // 0=input, 1=output, 2=append, 3=heredoc
-	struct s_redir *next;
-} t_redir;
+typedef struct s_redir
+{
+	char			*file;
+	int				type; // 0=input, 1=output, 2=append, 3=heredoc
+	struct s_redir	*next;
+}					t_redir;
 
-typedef struct s_command {
-	char **args;			// command + arguments
-	t_redir *redir;			// linked list of redirections
-	int pipe_out;			// 1 if output is piped to next command
-	struct s_command *next;	// next command in pipeline
-} t_command;
+typedef struct s_command
+{
+	char				**args;		// command + arguments
+	t_redir				*redir;		// linked list of redirections
+	int					pipe_out;	// 1 if output is piped to next command
+	struct s_command	*next;		// next command in pipeline
+}						t_command;
+
+//builtins_1.c
+void		ft_putstr(char *str, int nl);
+void		ft_putstrs(char **strs, int nl);
+int			exp_equal(char *input);
+int			exp_already(char *input, t_env *command);
+
+//builtins_2.c
+void		env_printing(t_env *env_vars);
+int			env_lstcount(t_env *head);
+void		env_lstremove(t_env **head, char *str);
+void		env_lstaddback(t_env **head, char *str);
+
+//builtins_3.c
+void		bi_handler(t_command **command, t_env **env_vars);
+int			bi_checker(char *command);
 
 //main.c
-char	**env_filling(t_env *head);
-void	ext_handler(t_command *command, t_env *env_vars);
-void	pipe_ext_handler(t_command *command, t_env *env_vars);
-void	redirecting(t_redir *redir);
-void	piping(t_command *command, t_env **env_vars);
-void	ctrl_c(int s);
-void	ft_lstfree(t_env **head);
-char	*ft_lstgetvar(t_env *command, char *str);
-char	*replace_variable(t_env *env_vars, char *input);
-void	cmd_lstaddback(t_command **head, t_command *new);
-int		count_tokens(char **tokens);
-t_redir	*redir_new(char *file, int type);
-void	redir_addback(t_redir **head, t_redir *new);
+char		**env_filling(t_env *head);
+void		ext_handler(t_command *command, t_env *env_vars);
+void		pipe_ext_handler(t_command *command, t_env *env_vars);
+void		redirecting(t_redir *redir);
+void		piping(t_command *command, t_env **env_vars);
+void		ctrl_c(int s);
+void		cmd_freeing(t_command **command);
+
+//parsing.c
+void		cmd_lstaddback(t_command **head, t_command *new);
+int			count_tokens(char **tokens);
+t_redir		*redir_new(char *file, int type);
+void		redir_addback(t_redir **head, t_redir *new);
 t_command	*parsing(char *cmd_str);
-void	init(t_command **command, t_env **env_vars);
-void	cmd_freeing(t_command **command);
+char		*ft_lstgetvar(t_env *command, char *str);
+char		*replace_variable(t_env *env_vars, char *input);
+void		ft_lstfree(t_env **head);
+void		init(t_command **command, t_env **env_vars);
 
-//builtins.c
-int		equal_sign(char *str);
-void	ft_lstaddback(t_env **head, char *str);
-void	ft_lstremove(t_env **head, char *str);
-void	ft_putstr(char *str, int nl);
-void	ft_putstrs(char **strs, int nl);
-void    env_printing(t_env *env_vars);
-int		exp_equal(char *input);
-int		exp_already(char *input, t_env *command);
-void	bi_handler(t_command **command, t_env **env_vars);
-int		bi_checker(char *command);
+//utils_1.c
+int			ft_strcmp(char *s1, char *s2);
+int			ft_strlen(char *str);
+char		*ft_strdup(char *s);
+int			ft_strchr(char *str, char c);
 
-//utils.c
-int		ft_lstcount(t_env *head);
-int		ft_strcmp(char *s1, char *s2);
-int		ft_strlen(char *str);
-char	*ft_strdup(char *s);
-int		ft_strchr(char *str, char c);
-char	*ft_substr(char *s, int start, int len);
-char	*ft_strjoin(char *s1, char *s2);
-// static int	words(char *s, char c);
-// static char	**freeing(char **m, int i);
-// static char	*skip(char *s, char c);
-char	**ft_split(char *s, char c);
+//utils_2.c
+char		*ft_substr(char *s, int start, int len);
+char		*ft_strjoin(char *s1, char *s2);
+int			split_words(char *s, char c);
+char		**split_freeing(char **m, int i);
+char		**ft_split(char *s, char c);
