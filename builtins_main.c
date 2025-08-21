@@ -1,34 +1,17 @@
 #include "minishell.h"
 
-void	ft_putstr(char *str, int nl)
+void	bi_pwd(void)
 {
-	int	i;
+	char	*cwd_buf;
 
-	i = 0;
-	while (str[i])
-		write(1, &str[i++], 1);
-	if (nl)
-		write(1, "\n", 1);
+	cwd_buf = getcwd(NULL, 0);
+	if (!cwd_buf)
+		perror("getcwd");
+	else
+		ft_putstr(cwd_buf, 1);
 }
 
-void	ft_putstrs(char **strs, int nl)
-{
-	int	i;
-	int	j;
-
-	j = 0;
-	while (strs[j])
-	{
-		i = 0;
-		while (strs[j][i])
-			write(1, &strs[j][i++], 1);
-		j++;
-	}
-	if (nl)
-		write(1, "\n", 1);
-}
-
-char	*cd_home(t_env *env_vars, char *str)
+char	*bi_cd_home(t_env *env_vars, char *str)
 {
 	int		i;
 	t_env	*tmp;
@@ -52,11 +35,11 @@ char	*cd_home(t_env *env_vars, char *str)
 
 void	bi_cd(char **args, t_env *env_vars)
 {
-	char *dir;
+	char	*dir;
 
 	if (!args[1])
 	{
-		dir = cd_home(env_vars, "HOME");
+		dir = bi_cd_home(env_vars, "HOME");
 		if (!dir)
 		{
 			write(2, "minishell: cd: HOME not set\n", 28);
@@ -65,13 +48,22 @@ void	bi_cd(char **args, t_env *env_vars)
 	}
 	else
 		dir = args[1];
-	chdir(dir);
+	if (chdir(dir) == -1)
+	{
+		if (errno == ENOENT)
+			printf("cd: %s: No such file or directory\n", dir);
+		else if (errno == EACCES)
+			printf("cd: %s: Permission denied\n", dir);
+		else if (errno == ENOTDIR)
+			printf("cd: %s: Not a directory\n", dir);
+		else
+			printf("cd: %s: %s\n", dir, strerror(errno));
+		return ;
+	}
 }
 
 void	bi_handler(t_command **command, t_env **env_vars)
 {
-	char	cwd_buf[4096];
-
 	if (ft_strcmp((*command)->args[0], "export"))
 		expo_handler(command, env_vars);
 	else if (ft_strcmp((*command)->args[0], "env") && !(*command)->args[1])
@@ -79,7 +71,7 @@ void	bi_handler(t_command **command, t_env **env_vars)
 	else if (ft_strcmp((*command)->args[0], "unset"))
 		env_lstremove(env_vars, &(*command)->args[1]);
 	else if (ft_strcmp((*command)->args[0], "pwd"))
-		ft_putstr(getcwd(cwd_buf, sizeof(cwd_buf)), 1);
+		bi_pwd();
 	else if (ft_strcmp((*command)->args[0], "cd"))
 		bi_cd((*command)->args, *env_vars);
 	else if (ft_strcmp((*command)->args[0], "echo"))

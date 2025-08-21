@@ -7,6 +7,7 @@
 #include <signal.h>
 #include <sys/wait.h>
 #include <fcntl.h>
+#include <errno.h>
 
 typedef struct s_env
 {
@@ -38,24 +39,29 @@ void		expo_handler(t_command **command, t_env **env_vars);
 
 //builtins_env.c
 void		env_printing(t_env *env_vars, int expo);
-int			env_lstcount(t_env *head);
 void		env_lstremove(t_env **head, char **cmds);
 void		env_lstaddback(t_env **head, char *str);
+int			env_lstcount(t_env *head);
+char		**env_filling(t_env *head);
 
-//builtins_3.c
-void		ft_putstr(char *str, int nl);
-void		ft_putstrs(char **strs, int nl);
+//builtins_main.c
+void		bi_pwd();
+char		*bi_cd_home(t_env *env_vars, char *str);
+void		bi_cd(char **args, t_env *env_vars);
 void		bi_handler(t_command **command, t_env **env_vars);
 int			bi_checker(char *command);
 
 //main.c
-char		**env_filling(t_env *head);
 void		ext_handler(t_command *command, t_env *env_vars);
-void		pipe_ext_handler(t_command *command, t_env *env_vars);
 void		redirecting(t_redir *redir);
-void		piping(t_command *command, t_env **env_vars);
 void		ctrl_c(int s);
 void		cmd_freeing(t_command **command);
+
+//pipeline.c
+void		pipe_ext_handler(t_command *command, t_env *env_vars);
+void		pipe_setup(t_command *cmd, int *fd, int *prev_fd);
+void		pipe_handler(t_command *cmd, t_env **env_vars, int *fd, int *prev_fd);
+void		piping(t_command *cmd, t_env **env_vars);
 
 //parsing.c
 void		cmd_lstaddback(t_command **head, t_command *new);
@@ -84,3 +90,5 @@ char		**ft_split(char *s, char c);
 //utils_3.c
 int			ft_isdigit(int c);
 int			ft_isalpha(int c);
+void		ft_putstr(char *str, int nl);
+void		ft_putstrs(char **strs, int nl);

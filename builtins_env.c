@@ -17,21 +17,6 @@ void	env_printing(t_env *env_vars, int expo)
 	}
 }
 
-int	env_lstcount(t_env *head)
-{
-	t_env	*tmp;
-	int		i;
-
-	tmp = head;
-	i = 0;
-	while (tmp)
-	{
-		i++;
-		tmp = tmp->next;
-	}
-	return (i);
-}
-
 void	env_lstremove(t_env **head, char **cmds)
 {
 	t_env	*tmp;
@@ -80,4 +65,37 @@ void	env_lstaddback(t_env **head, char *str)
 	}
 	m->var = str;
 	m->next = NULL;
+}
+
+int	env_lstcount(t_env *head)
+{
+	t_env	*tmp;
+	int		i;
+
+	tmp = head;
+	i = 0;
+	while (tmp)
+	{
+		i++;
+		tmp = tmp->next;
+	}
+	return (i);
+}
+
+char	**env_filling(t_env *head)
+{
+	int		i;
+	t_env	*tmp;
+	char	**m;
+
+	i = 0;
+	tmp = head;
+	m = malloc(sizeof(char *) * (env_lstcount(head) + 1));
+	while (tmp)
+	{
+		m[i++] = tmp->var;
+		tmp = tmp->next;
+	}
+	m[i] = NULL;
+	return (m);
 }
