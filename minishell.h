@@ -29,15 +29,17 @@ typedef struct s_command
 	struct s_command	*next;		// next command in pipeline
 }						t_command;
 
-//builtins_1.c
-int			exp_equal(char *input);
-int			exp_already(char *input, t_env *command);
-void		exp_handler(t_command **command, t_env **env_vars);
+//builtins_expo.c
+int			expo_valid_id(char *input);
+int			expo_equal(char *input);
+int			expo_already(char *input, t_env *command);
+void		expo_lstedit(char *input, t_env **env_vars);
+void		expo_handler(t_command **command, t_env **env_vars);
 
-//builtins_2.c
-void		env_printing(t_env *env_vars);
+//builtins_env.c
+void		env_printing(t_env *env_vars, int expo);
 int			env_lstcount(t_env *head);
-void		env_lstremove(t_env **head, char *str);
+void		env_lstremove(t_env **head, char **cmds);
 void		env_lstaddback(t_env **head, char *str);
 
 //builtins_3.c
@@ -78,3 +80,7 @@ char		*ft_strjoin(char *s1, char *s2);
 int			split_words(char *s, char c);
 char		**split_freeing(char **m, int i);
 char		**ft_split(char *s, char c);
+
+//utils_3.c
+int			ft_isdigit(int c);
+int			ft_isalpha(int c);

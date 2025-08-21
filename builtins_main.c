@@ -28,20 +28,60 @@ void	ft_putstrs(char **strs, int nl)
 		write(1, "\n", 1);
 }
 
+char	*cd_home(t_env *env_vars, char *str)
+{
+	int		i;
+	t_env	*tmp;
+
+	tmp = env_vars;
+	while (tmp)
+	{
+		i = 0;
+		while (str[i] && str[i] != '=')
+		{
+			if (str[i] != tmp->var[i])
+				break ;
+			i++;
+		}
+		if (tmp->var[i] == '=')
+			return (&tmp->var[i + 1]);
+		tmp = tmp->next;
+	}
+	return (NULL);
+}
+
+void	bi_cd(char **args, t_env *env_vars)
+{
+	char *dir;
+
+	if (!args[1])
+	{
+		dir = cd_home(env_vars, "HOME");
+		if (!dir)
+		{
+			write(2, "minishell: cd: HOME not set\n", 28);
+			return ;
+		}
+	}
+	else
+		dir = args[1];
+	chdir(dir);
+}
+
 void	bi_handler(t_command **command, t_env **env_vars)
 {
-	char	cwd_buf[1024];
+	char	cwd_buf[4096];
 
 	if (ft_strcmp((*command)->args[0], "export"))
-		exp_handler(command, env_vars);
-	else if (ft_strcmp((*command)->args[0], "env"))
-		env_printing(*env_vars);
+		expo_handler(command, env_vars);
+	else if (ft_strcmp((*command)->args[0], "env") && !(*command)->args[1])
+		env_printing(*env_vars, 0);
 	else if (ft_strcmp((*command)->args[0], "unset"))
-		env_lstremove(env_vars, (*command)->args[1]);
+		env_lstremove(env_vars, &(*command)->args[1]);
 	else if (ft_strcmp((*command)->args[0], "pwd"))
 		ft_putstr(getcwd(cwd_buf, sizeof(cwd_buf)), 1);
 	else if (ft_strcmp((*command)->args[0], "cd"))
-		chdir((*command)->args[1]);
+		bi_cd((*command)->args, *env_vars);
 	else if (ft_strcmp((*command)->args[0], "echo"))
 	{
 		if (ft_strcmp((*command)->args[1], "-n"))

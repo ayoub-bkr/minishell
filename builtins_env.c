@@ -1,14 +1,18 @@
 #include "minishell.h"
 
-void	env_printing(t_env *env_vars)
+void	env_printing(t_env *env_vars, int expo)
 {
 	t_env	*tmp;
 
 	tmp = env_vars;
 	while (tmp)
 	{
-		if (exp_equal(tmp->var))
+		if (expo_equal(tmp->var))
+		{
+			if (expo)
+				ft_putstr("declare -x ", 0);
 			ft_putstr(tmp->var, 1);
+		}
 		tmp = tmp->next;
 	}
 }
@@ -28,30 +32,32 @@ int	env_lstcount(t_env *head)
 	return (i);
 }
 
-void	env_lstremove(t_env **head, char *str)
+void	env_lstremove(t_env **head, char **cmds)
 {
 	t_env	*tmp;
-	t_env	*freeing;
+	t_env	*to_free;
 
-	tmp = *head;
-	if (ft_strcmp(tmp->var, str))
+	while (*cmds)
 	{
-		freeing = tmp;
-		*head = tmp->next;
-		free(freeing);
-		return ;
-	}
-	while (tmp->next)
-	{
-		if (ft_strcmp(tmp->next->var, str) == 2)
+		tmp = *head;
+		if (ft_strcmp(tmp->var, *cmds))
 		{
-			freeing = tmp->next;
-			tmp->next = tmp->next->next;
-			free(freeing);
-			return ;
+			to_free = tmp;
+			*head = tmp->next;
+			free(to_free);
 		}
-		else
-			tmp = tmp->next;
+		while (tmp->next)
+		{
+			if (ft_strcmp(tmp->next->var, *cmds) == 2)
+			{
+				to_free = tmp->next;
+				tmp->next = tmp->next->next;
+				free(to_free);
+			}
+			else
+				tmp = tmp->next;
+		}
+		cmds++;
 	}
 }
 
