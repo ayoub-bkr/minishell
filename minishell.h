@@ -63,6 +63,12 @@ void		pipe_setup(t_command *cmd, int *fd, int *prev_fd);
 void		pipe_handler(t_command *cmd, t_env **env_vars, int *fd, int *prev_fd);
 void		piping(t_command *cmd, t_env **env_vars);
 
+//redirection.c
+void    	red_input(t_redir *redir);
+void		red_output(t_redir *redir);
+void		red_append(t_redir *redir);
+void		redirecting(t_redir *redir);
+
 //parsing.c
 void		cmd_lstaddback(t_command **head, t_command *new);
 int			count_tokens(char **tokens);

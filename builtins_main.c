@@ -64,6 +64,7 @@ void	bi_cd(char **args, t_env *env_vars)
 
 void	bi_handler(t_command **command, t_env **env_vars)
 {
+	redirecting((*command)->redir);
 	if (ft_strcmp((*command)->args[0], "export"))
 		expo_handler(command, env_vars);
 	else if (ft_strcmp((*command)->args[0], "env") && !(*command)->args[1])

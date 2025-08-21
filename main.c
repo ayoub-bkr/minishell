@@ -11,54 +11,13 @@ void	ext_handler(t_command *command, t_env *env_vars)
 	{
 		path = ft_strjoin("/bin/", command->args[0]);
 		new_envp = env_filling(env_vars);
+		if (command->redir)
+            redirecting(command->redir);
 		execve(path, command->args, new_envp);
 		exit(1);
 	}
 	else if (pid > 0)
 		waitpid(pid, NULL, 0);
-}
-
-void redirecting(t_redir *redir)
-{
-    int fd;
-
-    while (redir)
-    {
-        if (redir->type == 0) // <
-        {
-            fd = open(redir->file, O_RDONLY);
-            if (fd < 0)
-            {
-                perror(redir->file);
-                exit(1);
-            }
-            dup2(fd, STDIN_FILENO);
-            close(fd);
-        }
-        else if (redir->type == 1) // >
-        {
-            fd = open(redir->file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-            if (fd < 0)
-            {
-                perror(redir->file);
-                exit(1);
-            }
-            dup2(fd, STDOUT_FILENO);
-            close(fd);
-        }
-        else if (redir->type == 2) // >>
-        {
-            fd = open(redir->file, O_WRONLY | O_CREAT | O_APPEND, 0644);
-            if (fd < 0)
-            {
-                perror(redir->file);
-                exit(1);
-            }
-            dup2(fd, STDOUT_FILENO);
-            close(fd);
-        }
-        redir = redir->next;
-    }
 }
 
 void	ctrl_c(int s)
@@ -111,7 +70,17 @@ int	main(int ac, char **av, char **envp)
 		else
 		{
 			if (bi_checker(command->args[0]))
-				bi_handler(&command, &env_vars);
+			{
+				int	save_in = dup(STDIN_FILENO);
+        		int	save_out = dup(STDOUT_FILENO);
+        		if (command->redir)
+            		redirecting(command->redir);
+        		bi_handler(&command, &env_vars);
+        		dup2(save_in, STDIN_FILENO);
+        		dup2(save_out, STDOUT_FILENO);
+        		close(save_in);
+        		close(save_out);
+			}
 			else if (!access(ft_strjoin("/bin/", command->args[0]), F_OK))
 				ext_handler(command, env_vars);
 		}
