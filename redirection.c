@@ -42,41 +42,51 @@ void	red_append(t_redir *redir)
 	close(fd);
 }
 
-void red_heredoc(t_redir *redir)
+void red_heredoc(t_redir *redir, int last_red)
 {
-	int fd[2];
-	pipe(fd);
+	int 	fd[2];
 
+	pipe(fd);
+	char *line;
 	while (1)
 	{
-		char *line;
-
 		line = readline("> ");
+		if (!line)
+			break ;
 		if (ft_strcmp(line, redir->file))
 		{
-			write(fd[1], line, ft_strlen(line));
+			free(line);
 			break;
 		}
+		write(fd[1], line, ft_strlen(line));
 		write(fd[1], "\n", 1);
 		free(line);
 	}
 	close(fd[1]);
-	dup2(fd[0], STDIN_FILENO);
+	if (last_red)
+		dup2(fd[0], STDIN_FILENO);
 	close(fd[0]);
 }
 
 void	redirecting(t_redir *redir)
 {
-	while (redir)
+	t_redir	*tmp;
+	int		last_red;
+
+	tmp = redir;
+	while (tmp)
 	{
-		if (redir->type == 0)
-			red_input(redir);
-		else if (redir->type == 1)
-			red_output(redir);
-		else if (redir->type == 2)
-			red_append(redir);
-		else if (redir->type == 3)
-			red_heredoc(redir);
-		redir = redir->next;
+		if (tmp->type == 0)
+			red_input(tmp);
+		else if (tmp->type == 1)
+			red_output(tmp);
+		else if (tmp->type == 2)
+			red_append(tmp);
+		else if (tmp->type == 3)
+		{
+			last_red = (!tmp->next || tmp->next->type != 3);
+			red_heredoc(tmp, last_red);
+		}
+		tmp = tmp->next;
 	}
 }
