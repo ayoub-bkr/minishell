@@ -72,8 +72,8 @@ int	main(int ac, char **av, char **envp)
 		env_lstaddback(&env_vars, *envp++);
 
 	create_key_value_pairs(env_vars);
-	print_key_value_pairs(env_vars);
-	exit(0);
+	//print_key_value_pairs(env_vars);
+	//exit(0);
 	while (1)
 	{
 		signal(SIGINT, ctrl_c);
