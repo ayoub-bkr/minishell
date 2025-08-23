@@ -63,26 +63,27 @@ int	main(int ac, char **av, char **envp)
 		signal(SIGINT, ctrl_c);
 		signal(SIGQUIT, SIG_IGN);
 		init(&command, &env_vars);
+		heredoc_init(command);
 		if (!command)
 			continue;
 		if (command->next)
 			piping(command, &env_vars);
 		else
 		{
+			int saved_stdin  = dup(STDIN_FILENO);
+			int saved_stdout = dup(STDOUT_FILENO);
 			if (bi_checker(command->args[0]))
 			{
-				int	save_in = dup(STDIN_FILENO);
-        		int	save_out = dup(STDOUT_FILENO);
         		if (command->redir)
             		redirecting(command->redir);
         		bi_handler(&command, &env_vars);
-        		dup2(save_in, STDIN_FILENO);
-        		dup2(save_out, STDOUT_FILENO);
-        		close(save_in);
-        		close(save_out);
 			}
 			else if (!access(ft_strjoin("/bin/", command->args[0]), F_OK))
 				ext_handler(command, env_vars);
+			dup2(saved_stdin, STDIN_FILENO);
+			dup2(saved_stdout, STDOUT_FILENO);
+			close(saved_stdin);
+			close(saved_stdout);
 		}
 		cmd_freeing(&command);
 	}

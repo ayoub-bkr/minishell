@@ -42,36 +42,9 @@ void	red_append(t_redir *redir)
 	close(fd);
 }
 
-void red_heredoc(t_redir *redir, int last_red)
-{
-	int 	fd[2];
-
-	pipe(fd);
-	char *line;
-	while (1)
-	{
-		line = readline("> ");
-		if (!line)
-			break ;
-		if (ft_strcmp(line, redir->file))
-		{
-			free(line);
-			break;
-		}
-		write(fd[1], line, ft_strlen(line));
-		write(fd[1], "\n", 1);
-		free(line);
-	}
-	close(fd[1]);
-	if (last_red)
-		dup2(fd[0], STDIN_FILENO);
-	close(fd[0]);
-}
-
 void	redirecting(t_redir *redir)
 {
 	t_redir	*tmp;
-	int		last_red;
 
 	tmp = redir;
 	while (tmp)
@@ -84,8 +57,8 @@ void	redirecting(t_redir *redir)
 			red_append(tmp);
 		else if (tmp->type == 3)
 		{
-			last_red = (!tmp->next || tmp->next->type != 3);
-			red_heredoc(tmp, last_red);
+			dup2(tmp->heredoc_fd, STDIN_FILENO);
+			close(tmp->heredoc_fd);
 		}
 		tmp = tmp->next;
 	}

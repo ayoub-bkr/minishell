@@ -19,6 +19,7 @@ typedef struct s_redir
 {
 	char			*file;
 	int				type; // 0=input, 1=output, 2=append, 3=heredoc
+	int				heredoc_fd;
 	struct s_redir	*next;
 }					t_redir;
 
@@ -53,9 +54,12 @@ int			bi_checker(char *command);
 
 //main.c
 void		ext_handler(t_command *command, t_env *env_vars);
-void		redirecting(t_redir *redir);
 void		ctrl_c(int s);
 void		cmd_freeing(t_command **command);
+
+//heredoc.c
+void		heredoc_init(t_command *command);
+void		heredoc(t_redir *redir);
 
 //pipeline.c
 void		pipe_ext_handler(t_command *command, t_env *env_vars);
