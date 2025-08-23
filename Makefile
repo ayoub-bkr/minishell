@@ -8,6 +8,7 @@ SRC = main.c \
 	execution/utils_1.c \
 	execution/utils_2.c \
 	execution/utils_3.c \
+	execution/utils_4.c \
 	parsing/src/parsing.c  \
 	parsing/main.c \
 	  parsing/src/ad_print.c  \

@@ -37,6 +37,11 @@ typedef struct s_command
 	struct s_command	*next;
 }						t_command;
 
+void create_key_vaue(t_env *single_var);
+void create_key_value_pairs(t_env *env_vars);
+char *get_key(char *s);
+char *get_value(char *s);
+
 //builtins_expo.c
 int			expo_valid_id(char *input);
 int			expo_equal(char *input);
