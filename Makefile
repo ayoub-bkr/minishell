@@ -1,4 +1,13 @@
-SRC = builtins_env.c builtins_expo.c builtins_main.c heredoc.c main.c pipeline.c redirection.c parsing.c utils_1.c utils_2.c utils_3.c
+SRC = main.c parsing.c \
+	execution/builtins_env.c \
+	execution/builtins_expo.c \
+	execution/builtins_main.c \
+	execution/heredoc.c \
+	execution/pipeline.c \
+	execution/redirection.c \
+	execution/utils_1.c \
+	execution/utils_2.c \
+	execution/utils_3.c
 OBJ = $(SRC:.c=.o)
 
 NAME = minishell
