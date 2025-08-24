@@ -1,4 +1,4 @@
-#include "../minishell.h"
+#include "../../minishell.h"
 
 void	cmd_lstaddback(t_command **head, t_command *new)
 {

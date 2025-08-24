@@ -1,4 +1,4 @@
-#include "../../minishell.h"
+#include "../../../minishell.h"
 
 // go through each T_WORD
 // 	check for semi colomns

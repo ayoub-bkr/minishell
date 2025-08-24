@@ -1,4 +1,4 @@
-#include "../../minishell.h"
+#include "../../../minishell.h"
 
 void create_token_node(t_list **head, char *s)
 {

@@ -51,18 +51,21 @@ int	main(int ac, char **av, char **envp)
 {
 	t_env		*env_vars;
 	t_command	*command;
+	t_list		*head;
 
 	if (ac != 1 && av[1])
 		return (0);
 	env_vars = NULL;
 	command = NULL;
+	head = NULL;
 	while(*envp)
 		env_lstaddback(&env_vars, *envp++);
 	while (1)
 	{
 		signal(SIGINT, ctrl_c);
 		signal(SIGQUIT, SIG_IGN);
-		init(&command, &env_vars);
+		init(&head);
+		parsing(&command, head);
 		heredoc_init(command);
 		if (!command)
 			continue;
@@ -86,5 +89,7 @@ int	main(int ac, char **av, char **envp)
 			close(saved_stdout);
 		}
 		cmd_freeing(&command);
+		free(head);
+		head = NULL;
 	}
 }

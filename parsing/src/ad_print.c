@@ -1,4 +1,4 @@
-#include "../minishell.h"
+#include "../../minishell.h"
 
 // Print redirection type as string
 const char *redir_type_str(int type)

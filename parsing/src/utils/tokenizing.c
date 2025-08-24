@@ -1,4 +1,4 @@
-#include "../../minishell.h"
+#include "../../../minishell.h"
 
 void add_token(t_list **head, char *str, TokenType type)
 {

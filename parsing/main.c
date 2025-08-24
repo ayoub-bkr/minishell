@@ -1,4 +1,4 @@
-#include "minishell.h"
+#include "../minishell.h"
 #include <stdbool.h>
 #include <readline/readline.h>
 #include <readline/history.h>
@@ -103,23 +103,23 @@ void init(t_list **head)
 	syntax_error(*head);
 }
 
-void	cmd_freeing(t_command **command)
-{
-	t_command	*tmp;
-	int			i;
+// void	cmd_freeing(t_command **command)
+// {
+// 	t_command	*tmp;
+// 	int			i;
 
-	while (*command)
-	{
-		tmp = (*command)->next;
-		i = 0;
-		while ((*command)->args[i])
-			free((*command)->args[i++]);
-		free((*command)->args);
-		free(*command);
-		*command = tmp;
-	}
-	*command = NULL;
-}
+// 	while (*command)
+// 	{
+// 		tmp = (*command)->next;
+// 		i = 0;
+// 		while ((*command)->args[i])
+// 			free((*command)->args[i++]);
+// 		free((*command)->args);
+// 		free(*command);
+// 		*command = tmp;
+// 	}
+// 	*command = NULL;
+// }
 
 void	print_kolchi(t_command *command)
 {
@@ -141,26 +141,26 @@ void	print_kolchi(t_command *command)
 	
 }
 
-int main()
-{
-	t_list *head;
-	t_command *command;
-	command = NULL;
-	head = NULL;
-	// printf("cmd: %s\n", input);
+// int main()
+// {
+// 	t_list *head;
+// 	t_command *command;
+// 	command = NULL;
+// 	head = NULL;
+// 	// printf("cmd: %s\n", input);
 
-	while (1)
-	{
-		init(&head);
-		parsing(&command, head);
-		print_kolchi(command);
-		cmd_freeing(&command);
-		free(head);
-		head = NULL;
-	}
+// 	while (1)
+// 	{
+// 		init(&head);
+// 		parsing(&command, head);
+// 		print_kolchi(command);
+// 		cmd_freeing(&command);
+// 		free(head);
+// 		head = NULL;
+// 	}
 	
 
-	// print_list(head);
-	// debug_print_all(head, command);
-	return (0);
-}
+// 	// print_list(head);
+// 	// debug_print_all(head, command);
+// 	return (0);
+// }

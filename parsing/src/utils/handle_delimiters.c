@@ -1,4 +1,4 @@
-#include "../../minishell.h"
+#include "../../../minishell.h"
 
 char	*collect_delimiter(t_string *str)
 {
