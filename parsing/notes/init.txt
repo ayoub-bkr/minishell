@@ -1,0 +1,47 @@
+TODO: create two tokens for \ (backslash) and ; (semi_colon)
+	if any detected, give syntax error
+_____________________________________________________________________________________________________________
+
+parsing has tree stages! 
+
+1. tokanizing
+	1.1 handle quotes (single & double)
+
+2. grammar
+	1.1 operators
+	1.2 pipes
+	
+3. building the command! 
+
+________________________________________________________________________________________________________________________________
+
+(grammar rules are extracted regarding the positioning and syntax of the tokens)
+(every token has it's own rules if you look deeply into it!
+going no food for the next days to see it more clearly.)
+rules:
+	pipe token should be between two words or
+		WORD_TOKEN PIPE_TOKEN WORD_TOKEN/RED_TOKEN
+	for every new token, we run the rules check! 
+		based on what the token is
+TODO: create two tokens for \ (backslash) and ; (semi_colon)
+	if any detected, give syntax error
+
+
+______________
+
+i need to get to the point where i use make to test everythhing
+
+______
+
+answer this
+	what should happen if a syntax error happens! 
+
+	have a function that prints the syntax error 
+	free everything
+	return with the proper exit status
+
+__________ steps 
+
+let's build a function that goes throught the entire thing!
+
+because this one is the one we can inject every check into!
