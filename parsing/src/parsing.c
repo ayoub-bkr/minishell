@@ -74,10 +74,8 @@ int count_w_tokens(t_list *head)
 	return (i);
 }
 
-t_command *parsing(t_command **command, t_list *head)
+void *parsing(t_command **command, t_list *head)
 {
-	// NOTE: that cur->token->str we pass to redir_new is actually null 
-	// when we print it! i think i should replace it
 	if (!head)
 		return (NULL);
 
@@ -100,25 +98,25 @@ t_command *parsing(t_command **command, t_list *head)
 		else if (cur->token->type == T_RED_IN)
 		{
 			cur = cur->next;
-			redir_addback(&cmd->redir, redir_new(cur->token->str, 0));
+			redir_addback(&cmd->redir, redir_new(ft_strdup(cur->token->str), 0));
 		}
 		else if (cur->token->type == T_RED_OUT)
 		{
 			cur = cur->next;
-			redir_addback(&cmd->redir, redir_new(cur->token->str, 1));
+			redir_addback(&cmd->redir, redir_new(ft_strdup(cur->token->str), 1));
 		}
 		else if (cur->token->type == T_APPEND)
 		{
 			cur = cur->next;
-			redir_addback(&cmd->redir, redir_new(cur->token->str, 2));
+			redir_addback(&cmd->redir, redir_new(ft_strdup(cur->token->str), 2));
 		}
 		else if (cur->token->type == T_HEREDOC)
 		{
 			cur = cur->next;
-			redir_addback(&cmd->redir, redir_new(cur->token->str, 3));
+			redir_addback(&cmd->redir, redir_new(ft_strdup(cur->token->str), 3));
 		}
 		else
-			cmd->args[j++] = cur->token->str;
+			cmd->args[j++] = ft_strdup(cur->token->str);
 		cur = cur->next;
     }
 	cmd_lstaddback(command, cmd);

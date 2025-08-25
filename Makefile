@@ -27,7 +27,7 @@ SRC = main.c \
 OBJ = $(SRC:.c=.o)
 
 NAME = minishell
-FLAGS = -Wall -Werror -Wextra
+FLAGS = -g3 -Wall -Werror -Wextra
 CC = cc
 
 $(NAME): $(OBJ)

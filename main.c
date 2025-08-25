@@ -34,9 +34,13 @@ void	cmd_freeing(t_command **command)
 	t_command	*tmp;
 	int			i;
 
+	tmp = NULL;
 	while (*command)
 	{
-		tmp = (*command)->next;
+		if ((*command)->next)
+			tmp = (*command)->next;
+		else
+			tmp = NULL;
 		i = 0;
 		while ((*command)->args[i])
 			free((*command)->args[i++]);
@@ -57,6 +61,31 @@ void print_key_value_pairs(t_env *env_vars)
 	}
 }
 
+void free_token_list(t_list **head)
+{
+    t_list *current = *head;
+    t_list *next;
+    
+    while (current)
+    {
+        next = current->next;
+        
+        // Free the token string (only if it exists - metacharacters have NULL str)
+        if (current->token->str)
+            free(current->token->str);
+        
+        // Free the token itself
+        free(current->token);
+        
+        // Free the list node
+        free(current);
+        
+        current = next;
+    }
+    
+    *head = NULL;
+}
+
 int	main(int ac, char **av, char **envp)
 {
 	t_env		*env_vars;
@@ -72,8 +101,6 @@ int	main(int ac, char **av, char **envp)
 		env_lstaddback(&env_vars, *envp++);
 
 	create_key_value_pairs(env_vars);
-	//print_key_value_pairs(env_vars);
-	//exit(0);
 	while (1)
 	{
 		signal(SIGINT, ctrl_c);
@@ -103,7 +130,7 @@ int	main(int ac, char **av, char **envp)
 			close(saved_stdout);
 		}
 		cmd_freeing(&command);
-		free(head);
+		free_token_list(&head);  // ✅ Correct
 		head = NULL;
 	}
 }

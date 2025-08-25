@@ -97,6 +97,7 @@ void init(t_list **head)
 		add_history(input);
 	tokenize(input, head);
 	syntax_error(*head);
+	free(input);
 }
 
 // void	cmd_freeing(t_command **command)
