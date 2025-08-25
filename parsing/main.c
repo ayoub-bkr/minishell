@@ -1,9 +1,4 @@
 #include "../minishell.h"
-#include <stdbool.h>
-#include <readline/readline.h>
-#include <readline/history.h>
-#include <unistd.h>
-#include <stdio.h>
 
 void pipe_syntax_error(t_list *head)
 {
