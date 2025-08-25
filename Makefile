@@ -12,6 +12,11 @@ SRC = main.c \
 	parsing/src/parsing.c  \
 	parsing/main.c \
 	  parsing/src/expansion/mark_quotes.c  \
+	  parsing/src/expansion/get_env_value.c  \
+	  parsing/src/expansion/needs_expansion.c  \
+	  parsing/src/expansion/process_token_expansion.c  \
+	  parsing/src/expansion/string_management.c  \
+	  parsing/src/expansion/variable_expansion.c  \
 	  parsing/src/ad_print.c  \
 	  parsing/src/printing.c  \
 	  parsing/src/utils/tokenizing.c  \

@@ -201,3 +201,15 @@ void print_command(t_command *head);
 
 // expansion
 void process_token_expansion(Token *token, t_env *env_vars);
+int is_valid_var_name_char(char c);
+char *get_env_value(char *var_name, t_env *env_vars);
+void mark_quotes(char *str);
+void remove_quote_markers(t_string *input, t_string *output);
+int needs_expansion(char *str);
+void process_token_expansion(Token *token, t_env *env_vars);
+t_string *string_init(int initial_cap);
+void string_free(t_string *str);
+void string_append_char(t_string *str, char c);
+void string_append_str(t_string *dest, char *src);
+void expand_variable_at_position(char *str, int *i, t_string *result, t_env *env_vars);
+void expand_variables(char *str, t_string *result, t_env *env_vars);

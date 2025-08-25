@@ -23,3 +23,13 @@ char *get_env_value(char *var_name, t_env *env_vars);
 
 // 5. Helper: validate variable name
 int is_valid_var_name(char *name);
+
+/*
+ * CONTROL FLOW:
+ * 1. process_token_expansion() - Main entry point
+ * 2. mark_quotes() - Replace quotes with markers
+ * 3. needs_expansion() - Check if $ variables exist
+ * 4. expand_variables() - Process variables and build result
+ * 5. remove_quote_markers() - Clean up markers from result
+ * 6. Replace original token->str with final result
+ */
