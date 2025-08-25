@@ -1,5 +1,30 @@
 #include "../minishell.h"
 
+void free_token_list(t_list **head)
+{
+    t_list *current = *head;
+    t_list *next;
+    
+    while (current)
+    {
+        next = current->next;
+        
+        // Free the token string (only if it exists - metacharacters have NULL str)
+        if (current->token->str)
+            free(current->token->str);
+        
+        // Free the token itself
+        free(current->token);
+        
+        // Free the list node
+        free(current);
+        
+        current = next;
+    }
+    
+    *head = NULL;
+}
+
 int pipe_syntax_error(t_list *head)
 {
 	// TODO: handle if pipe is last node
@@ -111,6 +136,7 @@ int init(t_list **head)
 	status = syntax_error(*head);
 	if (!status)
 	{
+		free_token_list(head);
 		free(input);
 		return (0);
 	}

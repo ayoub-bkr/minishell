@@ -61,30 +61,6 @@ void print_key_value_pairs(t_env *env_vars)
 	}
 }
 
-void free_token_list(t_list **head)
-{
-    t_list *current = *head;
-    t_list *next;
-    
-    while (current)
-    {
-        next = current->next;
-        
-        // Free the token string (only if it exists - metacharacters have NULL str)
-        if (current->token->str)
-            free(current->token->str);
-        
-        // Free the token itself
-        free(current->token);
-        
-        // Free the list node
-        free(current);
-        
-        current = next;
-    }
-    
-    *head = NULL;
-}
 
 int	main(int ac, char **av, char **envp)
 {
@@ -107,8 +83,6 @@ int	main(int ac, char **av, char **envp)
 		signal(SIGQUIT, SIG_IGN);
 		if (!init(&head))
 		{
-			if (head)
-				free_token_list(&head);
 			head = NULL;
 			continue ;
 		}
@@ -135,8 +109,10 @@ int	main(int ac, char **av, char **envp)
 			close(saved_stdin);
 			close(saved_stdout);
 		}
-		cmd_freeing(&command);
-		free_token_list(&head);  // ✅ Correct
+		if (command)
+			cmd_freeing(&command);
+		if (head)
+			free_token_list(&head);  // ✅ Correct
 		head = NULL;
 	}
 }

@@ -68,8 +68,9 @@ int count_w_tokens(t_list *head)
 	i = 0;
 	while (cur)
 	{
+		if (cur->token->type == T_WORD)
+			i++;
 		cur = cur->next;
-		i++;
 	}
 	return (i);
 }
@@ -83,8 +84,14 @@ void parsing(t_command **command, t_list *head)
     t_command *cmd = malloc(sizeof(t_command));
 	int len = count_w_tokens(head);
 	int j = 0;
+	int i = 0;
     cmd->args = malloc(sizeof(char *) * (len + 1));
 	cmd->args[len] = NULL;
+	while (i <= len)
+	{
+		cmd->args[i] = NULL;
+		i++;
+	}
     cmd->redir = NULL;
     cmd->pipe_out = 0;
     cmd->next = NULL;

@@ -176,6 +176,7 @@ void create_token_node(t_list **head, char *s);
 char	*collect_delimiter(t_string *str);
 void handle_delimiter(t_string *str, t_list **head);
 // tokenizing
+void free_token_list(t_list **head);
 void tokenize(char *str, t_list **head);
 bool tokenize_metachar(char **str, t_list **head);
 char *extract_word(char **p, int size);
