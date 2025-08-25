@@ -103,6 +103,9 @@ int syntax_error(t_list *head)
 	status = redir_syntax_error(head);
 	if (!status)
 		return (0);
+	status = quote_syntax_error(head);
+	if (!status)
+		return (0);
 	return (status);
 }
 	

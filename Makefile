@@ -11,6 +11,7 @@ SRC = main.c \
 	execution/utils_4.c \
 	parsing/src/parsing.c  \
 	parsing/main.c \
+	  parsing/src/expansion/quote_syntax_error.c  \
 	  parsing/src/expansion/mark_quotes.c  \
 	  parsing/src/expansion/get_env_value.c  \
 	  parsing/src/expansion/needs_expansion.c  \

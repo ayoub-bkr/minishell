@@ -213,3 +213,4 @@ void string_append_char(t_string *str, char c);
 void string_append_str(t_string *dest, char *src);
 void expand_variable_at_position(char *str, int *i, t_string *result, t_env *env_vars);
 void expand_variables(char *str, t_string *result, t_env *env_vars);
+int quote_syntax_error(t_list *head);
