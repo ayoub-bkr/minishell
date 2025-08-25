@@ -37,12 +37,9 @@ typedef struct s_command
 	struct s_command	*next;
 }						t_command;
 
-//builtins_expo.c
-int			expo_valid_id(char *input);
-int			expo_equal(char *input);
-int			expo_already(char *input, t_env *command);
-void		expo_lstedit(char *input, t_env **env_vars);
-void		expo_handler(t_command **command, t_env **env_vars);
+//builtins_cd.c
+char		*bi_cd_home(t_env *env_vars, char *str);
+void		bi_cd(char **args, t_env *env_vars);
 
 //builtins_env.c
 void		env_printing(t_env *env_vars, int expo);
@@ -51,17 +48,18 @@ void		env_lstaddback(t_env **head, char *str);
 int			env_lstcount(t_env *head);
 char		**env_filling(t_env *head);
 
+//builtins_expo.c
+int			expo_valid_id(char *input);
+int			expo_equal(char *input);
+int			expo_already(char *input, t_env *command);
+void		expo_lstedit(char *input, t_env **env_vars);
+void		expo_handler(t_command **command, t_env **env_vars);
+
 //builtins_main.c
 void		bi_pwd();
-char		*bi_cd_home(t_env *env_vars, char *str);
-void		bi_cd(char **args, t_env *env_vars);
+void		bi_echo(char **args);
 void		bi_handler(t_command **command, t_env **env_vars);
 int			bi_checker(char *command);
-
-//main.c
-void		ext_handler(t_command *command, t_env *env_vars);
-void		ctrl_c(int s);
-void		cmd_freeing(t_command **command);
 
 //heredoc.c
 void		heredoc_init(t_command *command);
@@ -79,16 +77,11 @@ void		red_output(t_redir *redir);
 void		red_append(t_redir *redir);
 void		redirecting(t_redir *redir);
 
-//parsing.c
-// void		cmd_lstaddback(t_command **head, t_command *new);
-// int			count_tokens(char **tokens);
-// t_redir		*redir_new(char *file, int type);
-// void		redir_addback(t_redir **head, t_redir *new);
-// t_command	*parsing(char *cmd_str);
-// char		*ft_lstgetvar(t_env *command, char *str);
-// char		*replace_variable(t_env *env_vars, char *input);
-// void		ft_lstfree(t_env **head);
-// void		init(t_command **command, t_env **env_vars);
+//main.c
+char		*get_path(t_env *env_vars, char *cmd);
+void		ext_handler(t_command *command, t_env *env_vars);
+void		ctrl_c(int s);
+void		cmd_freeing(t_command **command);
 
 //utils_1.c
 int			ft_strcmp(char *s1, char *s2);
@@ -108,6 +101,17 @@ int			ft_isdigit(int c);
 int			ft_isalpha(int c);
 void		ft_putstr(char *str, int nl);
 void		ft_putstrs(char **strs, int nl);
+
+//parsing.c
+// void		cmd_lstaddback(t_command **head, t_command *new);
+// int			count_tokens(char **tokens);
+// t_redir		*redir_new(char *file, int type);
+// void		redir_addback(t_redir **head, t_redir *new);
+// t_command	*parsing(char *cmd_str);
+// char		*ft_lstgetvar(t_env *command, char *str);
+// char		*replace_variable(t_env *env_vars, char *input);
+// void		ft_lstfree(t_env **head);
+// void		init(t_command **command, t_env **env_vars);
 
 //----------------------------------- parsing -----------------------------------
 

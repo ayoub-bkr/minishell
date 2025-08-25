@@ -1,5 +1,33 @@
 #include "minishell.h"
 
+char	*get_path(t_env *env_vars, char *cmd)
+{
+	t_env	*tmp;
+	char	**paths;
+
+	tmp = env_vars;
+	paths = NULL;
+	while (tmp)
+	{
+		if (ft_strcmp(tmp->var, "PATH") == 2)
+		{
+			tmp->var += 5;
+			paths = ft_split(tmp->var, ':');
+		}
+		tmp = tmp->next;
+	}
+	if (!paths)
+		return (NULL);
+	while (*paths)
+	{
+		*paths = ft_strjoin(*paths, "/");
+		if (!access(ft_strjoin(*paths, cmd), F_OK))
+			return (ft_strjoin(*paths, cmd));
+		paths++;
+	}
+	return (NULL);
+}
+
 void	ext_handler(t_command *command, t_env *env_vars)
 {
 	pid_t	pid;
@@ -9,12 +37,19 @@ void	ext_handler(t_command *command, t_env *env_vars)
 	pid	= fork();
 	if (!pid)
 	{
-		path = ft_strjoin("/bin/", command->args[0]);
-		new_envp = env_filling(env_vars);
+		if (ft_strchr(command->args[0], '/'))
+			path = command->args[0];
+		else
+			path = get_path(env_vars, command->args[0]);
 		if (command->redir)
-            redirecting(command->redir);
-		execve(path, command->args, new_envp);
-		exit(1);
+			redirecting(command->redir);
+		if (path)
+			new_envp = env_filling(env_vars);
+		if (execve(path, command->args, new_envp) == -1)
+		{
+			printf("%s: command not found\n", command->args[0]);
+			exit(1);
+		}
 	}
 	else if (pid > 0)
 		waitpid(pid, NULL, 0);
@@ -47,6 +82,26 @@ void	cmd_freeing(t_command **command)
 	*command = NULL;
 }
 
+void	print_kolchi(t_command *command)
+{
+	int	i = 0;
+
+	while (command)
+	{
+		i = 0;
+		printf("-------\n");
+		while (command->args[i])
+			printf("args : %s\n", command->args[i++]);
+		while (command->redir)
+		{
+			printf("file : %s\n type : %d\n", command->redir->file, command->redir->type);
+			command->redir = command->redir->next;
+		}
+		command = command->next;
+	}
+	
+}
+
 int	main(int ac, char **av, char **envp)
 {
 	t_env		*env_vars;
@@ -67,6 +122,13 @@ int	main(int ac, char **av, char **envp)
 		init(&head);
 		parsing(&command, head);
 		heredoc_init(command);
+
+		print_kolchi(command);
+		cmd_freeing(&command);
+		command = NULL;
+		head = NULL;
+		continue ;
+		
 		if (!command)
 			continue;
 		if (command->next)
@@ -77,11 +139,11 @@ int	main(int ac, char **av, char **envp)
 			int saved_stdout = dup(STDOUT_FILENO);
 			if (bi_checker(command->args[0]))
 			{
-        		if (command->redir)
-            		redirecting(command->redir);
-        		bi_handler(&command, &env_vars);
+				if (command->redir)
+					redirecting(command->redir);
+				bi_handler(&command, &env_vars);
 			}
-			else if (!access(ft_strjoin("/bin/", command->args[0]), F_OK))
+			else
 				ext_handler(command, env_vars);
 			dup2(saved_stdin, STDIN_FILENO);
 			dup2(saved_stdout, STDOUT_FILENO);
@@ -89,7 +151,7 @@ int	main(int ac, char **av, char **envp)
 			close(saved_stdout);
 		}
 		cmd_freeing(&command);
-		free(head);
+		// free(head);
 		head = NULL;
 	}
 }

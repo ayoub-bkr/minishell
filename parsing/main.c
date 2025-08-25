@@ -94,6 +94,7 @@ void init(t_list **head)
 	}
 	else
 		add_history(input);
+
 	tokenize(input, head);
 	syntax_error(*head);
 }
@@ -116,25 +117,25 @@ void init(t_list **head)
 // 	*command = NULL;
 // }
 
-void	print_kolchi(t_command *command)
-{
-	int	i = 0;
+// void	print_kolchi(t_command *command)
+// {
+// 	int	i = 0;
 
-	while (command)
-	{
-		i = 0;
-		printf("-------\n");
-		while (command->args[i])
-			printf("args : %s\n", command->args[i++]);
-		while (command->redir)
-		{
-			printf("file : %s\n type : %d\n", command->redir->file, command->redir->type);
-			command->redir = command->redir->next;
-		}
-		command = command->next;
-	}
+// 	while (command)
+// 	{
+// 		i = 0;
+// 		printf("-------\n");
+// 		while (command->args[i])
+// 			printf("args : %s\n", command->args[i++]);
+// 		while (command->redir)
+// 		{
+// 			printf("file : %s\n type : %d\n", command->redir->file, command->redir->type);
+// 			command->redir = command->redir->next;
+// 		}
+// 		command = command->next;
+// 	}
 	
-}
+// }
 
 // int main()
 // {

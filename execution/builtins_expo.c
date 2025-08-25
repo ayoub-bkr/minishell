@@ -97,19 +97,27 @@ void	expo_lstedit(char *input, t_env **env_vars)
 void	expo_handler(t_command **command, t_env **env_vars)
 {
 	char	*tmp;
+	int		i;
 
 	if ((*command)->args[0] && !(*command)->args[1])
 		env_printing(*env_vars, 1);
-	else if (!(*command)->args[1]
-		|| !expo_equal((*command)->args[1])
-		|| !expo_valid_id((*command)->args[1]))
-		return ;
-	else if (expo_already((*command)->args[1], *env_vars))
-		expo_lstedit((*command)->args[1], env_vars);
-	else
+	i = 1;
+	while ((*command)->args[i])
 	{
-		tmp = ft_strdup((*command)->args[1]);
-		if (tmp)
-			env_lstaddback(env_vars, tmp);
+		if (!expo_equal((*command)->args[i])
+			|| !expo_valid_id((*command)->args[i]))
+		{
+			printf("export: '%s': not a valid identifier\n", (*command)->args[i]);
+			return ;
+		}
+		else if (expo_already((*command)->args[i], *env_vars))
+			expo_lstedit((*command)->args[i], env_vars);
+		else
+		{
+			tmp = ft_strdup((*command)->args[i]);
+			if (tmp)
+				env_lstaddback(env_vars, tmp);
+		}
+		i++;
 	}
 }

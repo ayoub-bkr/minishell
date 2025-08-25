@@ -23,57 +23,20 @@ void	bi_pwd(void)
 		ft_putstr(cwd_buf, 1);
 }
 
-char	*bi_cd_home(t_env *env_vars, char *str)
+void	bi_echo(char **args)
 {
-	int		i;
-	t_env	*tmp;
+	int	i;
 
-	tmp = env_vars;
-	while (tmp)
+	i = 1;
+	if (ft_strcmp(args[i], "-n"))
 	{
-		i = 0;
-		while (str[i] && str[i] != '=')
-		{
-			if (str[i] != tmp->var[i])
-				break ;
+		while (ft_strcmp(args[i], "-n"))
 			i++;
-		}
-		if (tmp->var[i] == '=')
-			return (&tmp->var[i + 1]);
-		tmp = tmp->next;
-	}
-	return (NULL);
-}
-
-void	bi_cd(char **args, t_env *env_vars)
-{
-	char	*dir;
-
-	if (!args[1])
-	{
-		dir = bi_cd_home(env_vars, "HOME");
-		if (!dir)
-		{
-			write(2, "minishell: cd: HOME not set\n", 28);
-			return ;
-		}
+		ft_putstrs(&args[i], 0);
 	}
 	else
-		dir = args[1];
-	if (chdir(dir) == -1)
-	{
-		if (errno == ENOENT)
-			printf("cd: %s: No such file or directory\n", dir);
-		else if (errno == EACCES)
-			printf("cd: %s: Permission denied\n", dir);
-		else if (errno == ENOTDIR)
-			printf("cd: %s: Not a directory\n", dir);
-		else
-			printf("cd: %s: %s\n", dir, strerror(errno));
-		return ;
-	}
+		ft_putstrs(&args[i], 1);
 }
-
 void	bi_handler(t_command **command, t_env **env_vars)
 {
 	redirecting((*command)->redir);
@@ -88,12 +51,7 @@ void	bi_handler(t_command **command, t_env **env_vars)
 	else if (ft_strcmp((*command)->args[0], "cd"))
 		bi_cd((*command)->args, *env_vars);
 	else if (ft_strcmp((*command)->args[0], "echo"))
-	{
-		if (ft_strcmp((*command)->args[1], "-n"))
-			ft_putstrs(&(*command)->args[2], 0);
-		else
-			ft_putstrs(&(*command)->args[1], 1);
-	}
+		bi_echo((*command)->args);
 	else if (ft_strcmp((*command)->args[0], "exit"))
 	{
 		write(1, "exit\n", 5);
