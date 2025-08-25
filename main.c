@@ -82,25 +82,25 @@ void	cmd_freeing(t_command **command)
 	*command = NULL;
 }
 
-void	print_kolchi(t_command *command)
-{
-	int	i = 0;
+// void	print_kolchi(t_command *command)
+// {
+// 	int	i = 0;
 
-	while (command)
-	{
-		i = 0;
-		printf("-------\n");
-		while (command->args[i])
-			printf("args : %s\n", command->args[i++]);
-		while (command->redir)
-		{
-			printf("file : %s\n type : %d\n", command->redir->file, command->redir->type);
-			command->redir = command->redir->next;
-		}
-		command = command->next;
-	}
+// 	while (command)
+// 	{
+// 		i = 0;
+// 		printf("-------\n");
+// 		while (command->args[i])
+// 			printf("args : %s\n", command->args[i++]);
+// 		while (command->redir)
+// 		{
+// 			printf("file : %s\n type : %d\n", command->redir->file, command->redir->type);
+// 			command->redir = command->redir->next;
+// 		}
+// 		command = command->next;
+// 	}
 	
-}
+// }
 
 int	main(int ac, char **av, char **envp)
 {
@@ -119,15 +119,20 @@ int	main(int ac, char **av, char **envp)
 	{
 		signal(SIGINT, ctrl_c);
 		signal(SIGQUIT, SIG_IGN);
-		init(&head);
+		if (!init(&head))
+		{
+			head = NULL;
+			continue ;
+		}
+		// init(&head);
 		parsing(&command, head);
 		heredoc_init(command);
 
-		print_kolchi(command);
-		cmd_freeing(&command);
-		command = NULL;
-		head = NULL;
-		continue ;
+		// print_kolchi(command);
+		// cmd_freeing(&command);
+		// command = NULL;
+		// head = NULL;
+		// continue ;
 		
 		if (!command)
 			continue;
@@ -150,8 +155,10 @@ int	main(int ac, char **av, char **envp)
 			close(saved_stdin);
 			close(saved_stdout);
 		}
-		cmd_freeing(&command);
-		// free(head);
+		if (command)
+			cmd_freeing(&command);
+		if (head)
+			free_token_list(&head);
 		head = NULL;
 	}
 }

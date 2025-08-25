@@ -68,25 +68,30 @@ int count_w_tokens(t_list *head)
 	i = 0;
 	while (cur)
 	{
+		if (cur->token->type == T_WORD)
+			i++;
 		cur = cur->next;
-		i++;
 	}
 	return (i);
 }
 
-t_command *parsing(t_command **command, t_list *head)
+void parsing(t_command **command, t_list *head)
 {
-	// NOTE: that cur->token->str we pass to redir_new is actually null 
-	// when we print it! i think i should replace it
 	if (!head)
-		return (NULL);
+		return ;
 
 	t_list *cur = head;
     t_command *cmd = malloc(sizeof(t_command));
 	int len = count_w_tokens(head);
 	int j = 0;
+	int i = 0;
     cmd->args = malloc(sizeof(char *) * (len + 1));
 	cmd->args[len] = NULL;
+	while (i <= len)
+	{
+		cmd->args[i] = NULL;
+		i++;
+	}
     cmd->redir = NULL;
     cmd->pipe_out = 0;
     cmd->next = NULL;
@@ -100,59 +105,29 @@ t_command *parsing(t_command **command, t_list *head)
 		else if (cur->token->type == T_RED_IN)
 		{
 			cur = cur->next;
-			redir_addback(&cmd->redir, redir_new(cur->token->str, 0));
+			redir_addback(&cmd->redir, redir_new(ft_strdup(cur->token->str), 0));
 		}
 		else if (cur->token->type == T_RED_OUT)
 		{
 			cur = cur->next;
-			redir_addback(&cmd->redir, redir_new(cur->token->str, 1));
+			redir_addback(&cmd->redir, redir_new(ft_strdup(cur->token->str), 1));
 		}
 		else if (cur->token->type == T_APPEND)
 		{
 			cur = cur->next;
-			redir_addback(&cmd->redir, redir_new(cur->token->str, 2));
+			redir_addback(&cmd->redir, redir_new(ft_strdup(cur->token->str), 2));
 		}
 		else if (cur->token->type == T_HEREDOC)
 		{
 			cur = cur->next;
-			redir_addback(&cmd->redir, redir_new(cur->token->str, 3));
+			redir_addback(&cmd->redir, redir_new(ft_strdup(cur->token->str), 3));
 		}
 		else
-			cmd->args[j++] = cur->token->str;
+			cmd->args[j++] = ft_strdup(cur->token->str);
 		cur = cur->next;
     }
 	cmd_lstaddback(command, cmd);
 	if (cur && cur->token->type == T_PIPE && cur->next)
 			parsing(command, cur->next);
-    return cmd;
+    return ;
 }
-
-/* new part
-t_command *parsing(char *cmd_str)
-{
-    t_command *cmd = malloc(sizeof(t_command));
-    int i = 0, j = 0;
-    char **tokens = ft_split(cmd_str, ' '); // split by space
-    cmd->args = malloc(sizeof(char *) * (count_tokens(tokens) + 1));
-    cmd->redir = NULL;
-    cmd->pipe_out = 0;
-    cmd->next = NULL;
-
-    while (tokens[i])
-    {
-        if (strcmp(tokens[i], "<") == 0 && tokens[i+1])
-            redir_addback(&cmd->redir, redir_new(ft_strdup(tokens[++i]), 0));
-        else if (strcmp(tokens[i], ">") == 0 && tokens[i+1])
-            redir_addback(&cmd->redir, redir_new(ft_strdup(tokens[++i]), 1));
-        else if (strcmp(tokens[i], ">>") == 0 && tokens[i+1])
-            redir_addback(&cmd->redir, redir_new(ft_strdup(tokens[++i]), 2));
-        else if (strcmp(tokens[i], "<<") == 0 && tokens[i+1])
-            redir_addback(&cmd->redir, redir_new(ft_strdup(tokens[++i]), 3));
-        else
-            cmd->args[j++] = ft_strdup(tokens[i]);
-        i++;
-    }
-    cmd->args[j] = NULL;
-    return cmd;
-}
-*/

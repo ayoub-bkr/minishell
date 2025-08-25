@@ -1,10 +1,35 @@
 #include "../minishell.h"
 
-void pipe_syntax_error(t_list *head)
+void free_token_list(t_list **head)
+{
+    t_list *current = *head;
+    t_list *next;
+    
+    while (current)
+    {
+        next = current->next;
+        
+        // Free the token string (only if it exists - metacharacters have NULL str)
+        if (current->token->str)
+            free(current->token->str);
+        
+        // Free the token itself
+        free(current->token);
+        
+        // Free the list node
+        free(current);
+        
+        current = next;
+    }
+    
+    *head = NULL;
+}
+
+int pipe_syntax_error(t_list *head)
 {
 	// TODO: handle if pipe is last node
 	if (!head)
-		return ;
+		return (0);
 	t_list *cur = head;
 	int i = 0;
 	TokenType prev_token_type;
@@ -16,31 +41,32 @@ void pipe_syntax_error(t_list *head)
 			{	
 				printf("[+] syntax error\n");
 				printf("{-} pipe cannot be first node\n");
-				exit(0);
+				return (0);
 			}
 			if (prev_token_type == T_PIPE)
 			{	
 				printf("[+] syntax error\n");
 				printf("{-} multiple pipes after each other\n");
-				exit(0);
+				return (0);
 			}
 			if (!cur->next || cur->next->token->type != T_WORD)
 			{
 				printf("[+] syntax error\n");
 				printf("{-} pipe without next command\n");
-				exit(0);
+				return (0);
 			}
 		}
 		prev_token_type = cur->token->type;
 		i++;
 		cur = cur->next; 
 	}
+	return (1);
 }
 
-void redir_syntax_error(t_list *head)
+int redir_syntax_error(t_list *head)
 {
 	if (!head)
-		return ;
+		return (0);
 	t_list *cur = head;
 	TokenType pttype;
 	TokenType cttype;
@@ -53,37 +79,46 @@ void redir_syntax_error(t_list *head)
 			{
 				printf("[+] syntax error\n");
 				printf("{-} multiple redirections after each other\n");
-				exit(0);
+				return 0;
 			}
 			if (!cur->next || cur->next->token->type != T_WORD)
 			{
 				printf("[+] syntax error\n");
 				printf("{-} redirection without target\n");
-				exit(0);
+				return 0;
 			}
 		}
 		pttype = cur->token->type;
 		cur = cur->next;
 	}
+	return (1);
 }
 
-void syntax_error(t_list *head)
+int syntax_error(t_list *head)
 {
-	pipe_syntax_error(head);
-	redir_syntax_error(head);
+	int status = 1;
+	status = pipe_syntax_error(head);
+	if (!status)
+		return (0);
+	status = redir_syntax_error(head);
+	if (!status)
+		return (0);
+	return (status);
 }
 	
 
 
-void init(t_list **head)
+int init(t_list **head)
 {
 	// char *input = "echo'sjid'|echo -n";
 	//input = "   ls -l | cat file.txt >> here.txt |||||    \"okey \" here\" nice\" right\" word\" something\"\"\"\"   <<<<<<<";
 	// input = "   echo |    \"okey \" here\" nice\" right\" word\" something\"\"\"\"   > echo << end";
 	// TODO: handle these cases
 	//input = "   \"\"\"\" ";
+	//input = "   l\"s\"" ";
 	//input = "   ls -l | cat file.txt >> here.txt     \"echo \"\"hello world\"\"\"\"\"\"\"   ";
 	char	*input;
+	int status = 1;
 
 	input = readline("minishell$ ");
 	if (!input)
@@ -94,9 +129,19 @@ void init(t_list **head)
 	}
 	else
 		add_history(input);
-
+	// TODO: you have to know each return of each function!
+	// if it doesn't work as expected move to next command after 
+	// you set everything to default
 	tokenize(input, head);
-	syntax_error(*head);
+	status = syntax_error(*head);
+	if (!status)
+	{
+		free_token_list(head);
+		free(input);
+		return (0);
+	}
+	free(input);
+	return (status);
 }
 
 // void	cmd_freeing(t_command **command)
@@ -117,25 +162,25 @@ void init(t_list **head)
 // 	*command = NULL;
 // }
 
-// void	print_kolchi(t_command *command)
-// {
-// 	int	i = 0;
+void	print_kolchi(t_command *command)
+{
+	int	i = 0;
 
-// 	while (command)
-// 	{
-// 		i = 0;
-// 		printf("-------\n");
-// 		while (command->args[i])
-// 			printf("args : %s\n", command->args[i++]);
-// 		while (command->redir)
-// 		{
-// 			printf("file : %s\n type : %d\n", command->redir->file, command->redir->type);
-// 			command->redir = command->redir->next;
-// 		}
-// 		command = command->next;
-// 	}
+	while (command)
+	{
+		i = 0;
+		printf("-------\n");
+		while (command->args[i])
+			printf("args : %s\n", command->args[i++]);
+		while (command->redir)
+		{
+			printf("file : %s\n type : %d\n", command->redir->file, command->redir->type);
+			command->redir = command->redir->next;
+		}
+		command = command->next;
+	}
 	
-// }
+}
 
 // int main()
 // {
