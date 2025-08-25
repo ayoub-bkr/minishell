@@ -11,6 +11,7 @@ SRC = main.c \
 	execution/utils_4.c \
 	parsing/src/parsing.c  \
 	parsing/main.c \
+	  parsing/src/expansion/mark_quotes.c  \
 	  parsing/src/ad_print.c  \
 	  parsing/src/printing.c  \
 	  parsing/src/utils/tokenizing.c  \
@@ -28,6 +29,7 @@ OBJ = $(SRC:.c=.o)
 
 NAME = minishell
 FLAGS = -g3 -Wall -Werror -Wextra
+FLAGS += -fsigned-char
 CC = cc
 
 $(NAME): $(OBJ)

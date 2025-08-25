@@ -81,7 +81,7 @@ int	main(int ac, char **av, char **envp)
 	{
 		signal(SIGINT, ctrl_c);
 		signal(SIGQUIT, SIG_IGN);
-		if (!init(&head))
+		if (!init(&head, env_vars))
 		{
 			head = NULL;
 			continue ;

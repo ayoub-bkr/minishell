@@ -1,0 +1,25 @@
+
+-> quote marking
+-> variable expansion
+-> quote removal
+	use t_string to create new string,
+		old with quote,
+		new without them
+
+// 1. Mark quote boundaries and track state
+void mark_quotes(char *str);
+
+// 2. Expand variables (only in unquoted/double-quoted sections)
+// you need t_string here, but should it be an argument or just
+// get created inside the function itself
+void expand_variables(t_string *str, t_env *env_vars);
+
+// 3. Remove quote markers
+void remove_quote_markers(char *input, t_string *output)
+
+
+// 4. Helper: find variable value
+char *get_env_value(char *var_name, t_env *env_vars);
+
+// 5. Helper: validate variable name
+int is_valid_var_name(char *name);

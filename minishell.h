@@ -37,6 +37,13 @@ typedef struct s_command
 	struct s_command	*next;
 }						t_command;
 
+typedef enum {
+    UNQUOTED,
+    IN_SINGLE,
+    IN_DOUBLE
+} quote_state;
+
+
 void create_key_vaue(t_env *single_var);
 void create_key_value_pairs(t_env *env_vars);
 char *get_key(char *s);
@@ -154,7 +161,7 @@ typedef struct
 	int w_q_len;
 } t_string;
 
-int init(t_list **head);
+int init(t_list **head, t_env *env_vars);
 void *ft_memcpy(void *dest, void *src, int n);
 Token *ft_newtoken(char *s, TokenType type);
 t_list *ft_lstnew(Token *token);
@@ -190,3 +197,7 @@ void		redir_addback(t_redir **head, t_redir *new);
 void parsing(t_command **command, t_list *head);
 void print_list(t_list *head);
 void print_command(t_command *head);
+
+
+// expansion
+void process_token_expansion(Token *token, t_env *env_vars);
