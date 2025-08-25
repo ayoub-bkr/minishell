@@ -16,19 +16,19 @@ void pipe_syntax_error(t_list *head)
 			{	
 				printf("[+] syntax error\n");
 				printf("{-} pipe cannot be first node\n");
-				exit(0);
+				return ;
 			}
 			if (prev_token_type == T_PIPE)
 			{	
 				printf("[+] syntax error\n");
 				printf("{-} multiple pipes after each other\n");
-				exit(0);
+				return ;
 			}
 			if (!cur->next || cur->next->token->type != T_WORD)
 			{
 				printf("[+] syntax error\n");
 				printf("{-} pipe without next command\n");
-				exit(0);
+				return ;
 			}
 		}
 		prev_token_type = cur->token->type;
@@ -53,13 +53,13 @@ void redir_syntax_error(t_list *head)
 			{
 				printf("[+] syntax error\n");
 				printf("{-} multiple redirections after each other\n");
-				exit(0);
+				return ;
 			}
 			if (!cur->next || cur->next->token->type != T_WORD)
 			{
 				printf("[+] syntax error\n");
 				printf("{-} redirection without target\n");
-				exit(0);
+				return ;
 			}
 		}
 		pttype = cur->token->type;
@@ -82,6 +82,7 @@ void init(t_list **head)
 	// input = "   echo |    \"okey \" here\" nice\" right\" word\" something\"\"\"\"   > echo << end";
 	// TODO: handle these cases
 	//input = "   \"\"\"\" ";
+	//input = "   l\"s\"" ";
 	//input = "   ls -l | cat file.txt >> here.txt     \"echo \"\"hello world\"\"\"\"\"\"\"   ";
 	char	*input;
 
