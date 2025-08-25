@@ -154,7 +154,7 @@ typedef struct
 	int w_q_len;
 } t_string;
 
-void init(t_list **head);
+int init(t_list **head);
 void *ft_memcpy(void *dest, void *src, int n);
 Token *ft_newtoken(char *s, TokenType type);
 t_list *ft_lstnew(Token *token);
@@ -186,6 +186,6 @@ void		cmd_lstaddback(t_command **head, t_command *new);
 t_redir		*redir_new(char *file, int type);
 void		redir_addback(t_redir **head, t_redir *new);
 // parsing function
-void *parsing(t_command **command, t_list *head);
+void parsing(t_command **command, t_list *head);
 void print_list(t_list *head);
 void print_command(t_command *head);

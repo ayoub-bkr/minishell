@@ -105,7 +105,13 @@ int	main(int ac, char **av, char **envp)
 	{
 		signal(SIGINT, ctrl_c);
 		signal(SIGQUIT, SIG_IGN);
-		init(&head);
+		if (!init(&head))
+		{
+			if (head)
+				free_token_list(&head);
+			head = NULL;
+			continue ;
+		}
 		parsing(&command, head);
 		heredoc_init(command);
 		if (!command)

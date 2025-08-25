@@ -1,10 +1,10 @@
 #include "../minishell.h"
 
-void pipe_syntax_error(t_list *head)
+int pipe_syntax_error(t_list *head)
 {
 	// TODO: handle if pipe is last node
 	if (!head)
-		return ;
+		return (0);
 	t_list *cur = head;
 	int i = 0;
 	TokenType prev_token_type;
@@ -16,31 +16,32 @@ void pipe_syntax_error(t_list *head)
 			{	
 				printf("[+] syntax error\n");
 				printf("{-} pipe cannot be first node\n");
-				return ;
+				return (0);
 			}
 			if (prev_token_type == T_PIPE)
 			{	
 				printf("[+] syntax error\n");
 				printf("{-} multiple pipes after each other\n");
-				return ;
+				return (0);
 			}
 			if (!cur->next || cur->next->token->type != T_WORD)
 			{
 				printf("[+] syntax error\n");
 				printf("{-} pipe without next command\n");
-				return ;
+				return (0);
 			}
 		}
 		prev_token_type = cur->token->type;
 		i++;
 		cur = cur->next; 
 	}
+	return (1);
 }
 
-void redir_syntax_error(t_list *head)
+int redir_syntax_error(t_list *head)
 {
 	if (!head)
-		return ;
+		return (0);
 	t_list *cur = head;
 	TokenType pttype;
 	TokenType cttype;
@@ -53,29 +54,36 @@ void redir_syntax_error(t_list *head)
 			{
 				printf("[+] syntax error\n");
 				printf("{-} multiple redirections after each other\n");
-				return ;
+				return 0;
 			}
 			if (!cur->next || cur->next->token->type != T_WORD)
 			{
 				printf("[+] syntax error\n");
 				printf("{-} redirection without target\n");
-				return ;
+				return 0;
 			}
 		}
 		pttype = cur->token->type;
 		cur = cur->next;
 	}
+	return (1);
 }
 
-void syntax_error(t_list *head)
+int syntax_error(t_list *head)
 {
-	pipe_syntax_error(head);
-	redir_syntax_error(head);
+	int status = 1;
+	status = pipe_syntax_error(head);
+	if (!status)
+		return (0);
+	status = redir_syntax_error(head);
+	if (!status)
+		return (0);
+	return (status);
 }
 	
 
 
-void init(t_list **head)
+int init(t_list **head)
 {
 	// char *input = "echo'sjid'|echo -n";
 	//input = "   ls -l | cat file.txt >> here.txt |||||    \"okey \" here\" nice\" right\" word\" something\"\"\"\"   <<<<<<<";
@@ -85,6 +93,7 @@ void init(t_list **head)
 	//input = "   l\"s\"" ";
 	//input = "   ls -l | cat file.txt >> here.txt     \"echo \"\"hello world\"\"\"\"\"\"\"   ";
 	char	*input;
+	int status = 1;
 
 	input = readline("minishell$ ");
 	if (!input)
@@ -95,9 +104,18 @@ void init(t_list **head)
 	}
 	else
 		add_history(input);
+	// TODO: you have to know each return of each function!
+	// if it doesn't work as expected move to next command after 
+	// you set everything to default
 	tokenize(input, head);
-	syntax_error(*head);
+	status = syntax_error(*head);
+	if (!status)
+	{
+		free(input);
+		return (0);
+	}
 	free(input);
+	return (status);
 }
 
 // void	cmd_freeing(t_command **command)
