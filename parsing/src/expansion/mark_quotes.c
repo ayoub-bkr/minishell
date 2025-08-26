@@ -49,13 +49,13 @@ void mark_quotes(char *str)
 
 t_string *string_init(int initial_cap)
 {
-    t_string *str = malloc(sizeof(t_string));
+    t_string *str = gc_calloc(sizeof(t_string));
     if (!str)
         return NULL;
-    str->str = malloc(initial_cap);
+    str->str = gc_calloc(initial_cap);
     if (!str->str)
     {
-        free(str);
+        // free(str);
         return NULL;
     }
     str->len = 0;
@@ -80,9 +80,9 @@ void string_append_char(t_string *str, char c)
     {
         // Double the capacity
         int new_cap = str->cap * 2;
-        char *new_str = malloc(new_cap);
+        char *new_str = gc_calloc(new_cap);
         if (!new_str)
-            return; // Handle malloc failure
+            return; // Handle gc_calloc failure
         
         // Copy old data
         ft_memcpy(new_str, str->str, str->len);
@@ -213,7 +213,7 @@ void expand_variable_at_position(char *str, int *i, t_string *result, t_env *env
     
     // Create variable name string
     int var_len = *i - start;
-    char *var_name = malloc(var_len + 1);
+    char *var_name = gc_calloc(var_len + 1);
     if (!var_name)
     {
         (*i)--; // Adjust for main loop increment
@@ -306,11 +306,11 @@ void process_token_expansion(Token *token, t_env *env_vars)
         remove_quote_markers(input, output);
         
         // Replace token string
-        free(token->str);
+        // free(token->str);
         token->str = ft_strdup(output->str);
         
-        string_free(input);
-        string_free(output);
+        //string_free(input);
+        //string_free(output);
         return;
     }
     
@@ -327,8 +327,8 @@ void process_token_expansion(Token *token, t_env *env_vars)
     token->str = ft_strdup(final_result->str);
     
     // Cleanup
-    string_free(expanded);
-    string_free(final_result);
+    //string_free(expanded);
+    //string_free(final_result);
 }
 
 // ============================================================================

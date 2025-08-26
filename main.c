@@ -20,10 +20,10 @@ void	cmd_freeing(t_command **command)
 	{
 		tmp = (*command)->next;
 		i = 0;
-		while ((*command)->args[i])
-			free((*command)->args[i++]);
-		free((*command)->args);
-		free(*command);
+		// while ((*command)->args[i])
+		// 	free((*command)->args[i++]);
+		// free((*command)->args);
+		// free(*command);
 		*command = tmp;
 	}
 	*command = NULL;
@@ -76,10 +76,10 @@ int	main(int ac, char **av, char **envp)
 	while (*envp)
 		env_lstaddback(&env_vars, *envp++);
 	create_key_value_pairs(env_vars);
+	signal(SIGINT, ctrl_c);
+	signal(SIGQUIT, SIG_IGN);
 	while (1)
 	{
-		signal(SIGINT, ctrl_c);
-		signal(SIGQUIT, SIG_IGN);
 		init(&head, env_vars);
 		parsing(&command, head);
 		heredoc_init(command);

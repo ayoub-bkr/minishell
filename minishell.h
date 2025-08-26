@@ -146,8 +146,8 @@ void		cmd_freeing(t_command **command);
 void		executing(t_command **command, t_env **env_vars);
 void		minishell_main(t_command **command, t_env **env_vars, t_list **head);
 
-
-
+void	ft_bzero(void *s, size_t n);
+void	*gc_calloc(int size);
 
 //----------------------------------- parsing -----------------------------------
 

@@ -5,7 +5,7 @@ Token *ft_newtoken(char *s, TokenType type)
 	Token *new;
 	if (!s)
 		return (NULL);
-	new = malloc(sizeof(Token));
+	new = gc_calloc(sizeof(Token));
 	if (!new)
 		return (NULL);
 	new->str = s;
@@ -20,7 +20,7 @@ t_list *ft_lstnew(Token *token)
 	if (!token)
 		return (NULL);
 
-	new = malloc(sizeof(t_list));
+	new = gc_calloc(sizeof(t_list));
 	if (!new)
 		return (NULL);
 	new->token = token;

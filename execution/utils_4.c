@@ -21,8 +21,8 @@ char *get_key(char *s)
 	int i = 0;
 	while (s[i] && s[i] != '=')
 		i++;
-	// char *tmp = malloc(sizeof(char) * (i + 1));
-	char *tmp = malloc(i + 1);
+	// char *tmp = gc_calloc(sizeof(char) * (i + 1));
+	char *tmp = gc_calloc(i + 1);
 	if (!tmp)
 		return (NULL);
 	i = 0;
@@ -45,8 +45,8 @@ char *get_value(char *s)
 	start = ++i;
 	while (s[len + start])
 		len++;
-	// char *tmp = malloc(sizeof(char) * (len + 1));
-    char *tmp = malloc(len + 1);
+	// char *tmp = gc_calloc(sizeof(char) * (len + 1));
+    char *tmp = gc_calloc(len + 1);
 	if (!tmp)
 		return (NULL);
 	i = 0;

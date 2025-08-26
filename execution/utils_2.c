@@ -24,7 +24,7 @@ char	*ft_substr(char *s, int start, int len)
 		return (ft_strdup(""));
 	if (ft_strlen(s) - start < len)
 		len = ft_strlen(s) - start;
-	m = (char *) malloc(len + 1);
+	m = (char *) gc_calloc(len + 1);
 	if (!m)
 		return (0);
 	while (i < len)
@@ -50,7 +50,7 @@ char	*ft_strjoin(char *s1, char *s2)
 		return (ft_strdup(s2));
 	else if (!s2)
 		return (ft_strdup(s1));
-	m = (char *)malloc (ft_strlen(s1) + ft_strlen(s2) + 1);
+	m = (char *)gc_calloc (ft_strlen(s1) + ft_strlen(s2) + 1);
 	if (!m)
 		return (0);
 	while (s1[i])
@@ -98,7 +98,7 @@ char	**ft_split(char *s, char c)
 	i = 0;
 	if (!s)
 		return (NULL);
-	m = malloc(sizeof(char *) * (split_words(s, c) + 1));
+	m = gc_calloc(sizeof(char *) * (split_words(s, c) + 1));
 	if (!m)
 		return (NULL);
 	while (*s)
@@ -112,7 +112,7 @@ char	**ft_split(char *s, char c)
 			len++;
 		m[i] = ft_substr(s, 0, len);
 		if (m[i++] == NULL)
-			return (split_freeing(m, i));
+			return (NULL);
 		s += len;
 	}
 	m[i] = NULL;

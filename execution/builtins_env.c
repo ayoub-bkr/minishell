@@ -63,7 +63,7 @@ void	env_lstaddback(t_env **head, char *str)
 	t_env	*tmp;
 	t_env	*m;
 
-	m = malloc(sizeof(t_env));
+	m = gc_calloc(sizeof(t_env));
 	if (!m)
 		return ;
 	if (!*head || !(*head)->var)
@@ -102,7 +102,7 @@ char	**env_filling(t_env *head)
 
 	i = 0;
 	tmp = head;
-	m = malloc(sizeof(char *) * (env_lstcount(head) + 1));
+	m = gc_calloc(sizeof(char *) * (env_lstcount(head) + 1));
 	if (!m)
 		return (NULL);
 	while (tmp)

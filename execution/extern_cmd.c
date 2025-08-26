@@ -3,6 +3,7 @@
 void	exiting(int status)
 {
 	g_exit_status = status;
+	gc_calloc(-1);
 	exit(status);
 }
 
@@ -40,23 +41,29 @@ void	ext_handler(t_command *command, t_env *env_vars)
 	char	**new_envp;
 	char	*path;
 
-	pid = fork();
-	if (!pid)
+pid = fork();
+path = NULL;
+new_envp = NULL;
+if (!pid)
+{
+	if (ft_strchr(command->args[0], '/'))
+		path = command->args[0];
+	else
+		path = get_path(env_vars, command->args[0]);
+	if (command->redir)
+		redirecting(command->redir);
+	if (!path)
 	{
-		if (ft_strchr(command->args[0], '/'))
-			path = command->args[0];
-		else
-			path = get_path(env_vars, command->args[0]);
-		if (command->redir)
-			redirecting(command->redir);
-		if (path)
-			new_envp = env_filling(env_vars);
-		if (execve(path, command->args, new_envp) == -1)
-		{
-			fprintf(stderr, "%s: command not found\n", command->args[0]);
-			exiting(1);
-		}
+		fprintf(stderr, "%s: command not found\n", command->args[0]);
+		exiting(1);
 	}
-	else if (pid > 0)
-		waitpid(pid, NULL, 0);
+	new_envp = env_filling(env_vars);
+	if (execve(path, command->args, new_envp) == -1)
+	{
+		fprintf(stderr, "%s: command not found\n", command->args[0]);
+		exiting(1);
+	}
+}
+else if (pid > 0)
+	waitpid(pid, NULL, 0);
 }

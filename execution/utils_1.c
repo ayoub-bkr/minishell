@@ -53,7 +53,7 @@ char	*ft_strdup(char *s)
 	char	*m;
 
 	i = 0;
-	m = malloc(ft_strlen(s) + 1);
+	m = gc_calloc(ft_strlen(s) + 1);
 	if (!m)
 		return (0);
 	while (s[i])

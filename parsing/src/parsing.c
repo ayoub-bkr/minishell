@@ -22,7 +22,7 @@ void	cmd_lstaddback(t_command **head, t_command *new)
 
 t_redir *redir_new(char *file, int type)
 {
-    t_redir *r = malloc(sizeof(t_redir));
+    t_redir *r = gc_calloc(sizeof(t_redir));
     if (!r)
         return NULL;
     r->file = file;
@@ -81,11 +81,11 @@ void parsing(t_command **command, t_list *head)
 		return ;
 
 	t_list *cur = head;
-    t_command *cmd = malloc(sizeof(t_command));
+    t_command *cmd = gc_calloc(sizeof(t_command));
 	int len = count_w_tokens(head);
 	int j = 0;
 	int i = 0;
-    cmd->args = malloc(sizeof(char *) * (len + 1));
+    cmd->args = gc_calloc(sizeof(char *) * (len + 1));
 	cmd->args[len] = NULL;
 	while (i <= len)
 	{

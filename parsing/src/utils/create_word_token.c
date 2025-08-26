@@ -15,7 +15,7 @@ char *create_quote_word(t_string *str)
 		str->peek++;
 	}
 	len = str->end - str->start;
-	s = malloc(sizeof(char) * (len + 1));
+	s = gc_calloc(sizeof(char) * (len + 1));
 	if (!s)
 		return (NULL);
 	ft_memcpy(s, str->str + str->start, len);

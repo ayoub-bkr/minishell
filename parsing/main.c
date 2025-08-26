@@ -10,14 +10,14 @@ void free_token_list(t_list **head)
         next = current->next;
         
         // Free the token string (only if it exists - metacharacters have NULL str)
-        if (current->token->str)
-            free(current->token->str);
+        // if (current->token->str)
+        //     free(current->token->str);
         
-        // Free the token itself
-        free(current->token);
+        // // Free the token itself
+        // free(current->token);
         
-        // Free the list node
-        free(current);
+        // // Free the list node
+        // free(current);
         
         current = next;
     }
@@ -135,7 +135,8 @@ int init(t_list **head, t_env *env_vars)
 	{
 		rl_clear_history();
 		write(1, "exit\n", 5);
-		exit(0);
+		// gc_calloc(-1);
+		exiting(0);
 	}
 	else
 		add_history(input);

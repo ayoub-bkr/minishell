@@ -2,8 +2,8 @@
 
 void add_token(t_list **head, char *str, TokenType type)
 {
-	t_list *node = malloc(sizeof(t_list));
-	node->token = malloc(sizeof(Token));
+	t_list *node = gc_calloc(sizeof(t_list));
+	node->token = gc_calloc(sizeof(Token));
 	node->token->type = type;
 	node->token->str = str;
 	node->next = NULL;
@@ -13,7 +13,7 @@ void add_token(t_list **head, char *str, TokenType type)
 
 char *extract_word(char **p, int size)
 {
-	char *string = malloc((size + 1) * sizeof(char));
+	char *string = gc_calloc((size + 1) * sizeof(char));
 	ft_memcpy(string, *p, size);
 	string[size] = '\0';
 	*p += size;

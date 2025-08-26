@@ -5,11 +5,11 @@ t_string *ft_newstr(char *s)
 	t_string	*new;
 	int			len;
 
-	new = malloc(sizeof(t_string));
+	new = gc_calloc(sizeof(t_string));
 	if (!new)
 		return (NULL);
 	len = strlen(s);
-	new->str = malloc(sizeof(char) * (len + 1));
+	new->str = gc_calloc(sizeof(char) * (len + 1));
 	if (!new->str)
 	{
 		free(new);
