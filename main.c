@@ -29,7 +29,7 @@ void	cmd_freeing(t_command **command)
 	*command = NULL;
 }
 
-void	executing(t_command **command, t_env **env_vars)
+void	executing(t_command **command, t_env **env_vars, t_gc *gc)
 {
 	int	saved_stdin;
 	int	saved_stdout;
@@ -40,7 +40,7 @@ void	executing(t_command **command, t_env **env_vars)
 	{
 		if ((*command)->redir)
 			redirecting((*command)->redir);
-		bi_handler(command, env_vars);
+		bi_handler(command, env_vars, gc);
 	}
 	else
 		ext_handler(*command, *env_vars);
@@ -50,17 +50,31 @@ void	executing(t_command **command, t_env **env_vars)
 	close(saved_stdout);
 }
 
-void	minishell_main(t_command **command, t_env **env_vars, t_list **head)
+void	minishell_main(t_command **command, t_env **env_vars, t_list **head, t_gc *gc)
 {
 	if ((*command)->next)
-		piping(*command, env_vars);
+		piping(*command, env_vars, gc);
 	else
-		executing(command, env_vars);
+		executing(command, env_vars, gc);
 	if (*command)
 		cmd_freeing(command);
 	if (*head)
 		free_token_list(head);
 	*head = NULL;
+}
+void	*ft_memset(void *b, int c, size_t len)
+{
+	unsigned char	*dst;
+	size_t			i;
+
+	dst = (unsigned char *)b;
+	i = 0;
+	while (i < len)
+	{
+		dst[i] = (unsigned char)c;
+		i++;
+	}
+	return ((void *)dst);
 }
 
 int	main(int ac, char **av, char **envp)
@@ -68,25 +82,26 @@ int	main(int ac, char **av, char **envp)
 	t_env		*env_vars;
 	t_command	*command;
 	t_list		*head;
-
+	t_gc		gc;
 	if (ac != 1 && av[1])
 		return (0);
 	env_vars = NULL;
 	command = NULL;
 	head = NULL;
+	ft_memset(&gc, 0, sizeof(gc));
 	while (*envp)
-		env_lstaddback(&env_vars, *envp++);
-	create_key_value_pairs(env_vars);
+		env_lstaddback(&env_vars, *envp++, &gc);
+	create_key_value_pairs(env_vars, &gc);
 	while (1)
 	{
 		signal(SIGINT, ctrl_c);
 		signal(SIGQUIT, SIG_IGN);
-		init(&head, env_vars);
+		init(&head, env_vars, &gc);
 		parsing(&command, head);
 		heredoc_init(command);
 		if (!command)
 			continue ;
-		minishell_main(&command, &env_vars, &head);
+		minishell_main(&command, &env_vars, &head, &gc);
 	}
 	return (0);
 }

@@ -94,7 +94,7 @@ void	expo_lstedit(char *input, t_env **env_vars)
 	}
 }
 
-void	expo_handler(t_command **command, t_env **env_vars)
+void	expo_handler(t_command **command, t_env **env_vars, t_gc *gc)
 {
 	char	*tmp;
 	int		i;
@@ -117,7 +117,7 @@ void	expo_handler(t_command **command, t_env **env_vars)
 		{
 			tmp = ft_strdup((*command)->args[i]);
 			if (tmp)
-				env_lstaddback(env_vars, tmp);
+				env_lstaddback(env_vars, tmp, gc);
 		}
 		i++;
 	}

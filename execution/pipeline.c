@@ -53,7 +53,7 @@ void	pipe_waiting(pid_t pid)
 	}
 }
 
-void	pipe_setup(t_command *cmd, t_env **env_vars, int *fd, int *prev_fd)
+void	pipe_setup(t_command *cmd, t_env **env_vars, int *fd, int *prev_fd, t_gc *gc)
 {
 	if (*prev_fd != -1)
 	{
@@ -69,14 +69,14 @@ void	pipe_setup(t_command *cmd, t_env **env_vars, int *fd, int *prev_fd)
 	redirecting(cmd->redir);
 	if (bi_checker(cmd->args[0]))
 	{
-		bi_handler(&cmd, env_vars);
+		bi_handler(&cmd, env_vars, gc);
 		exiting(0);
 	}
 	else
 		pipe_ext_handler(cmd, *env_vars);
 }
 
-pid_t	pipe_forking(t_command *cmd, t_env **env_vars, int *fd, int *prev_fd)
+pid_t	pipe_forking(t_command *cmd, t_env **env_vars, int *fd, int *prev_fd, t_gc *gc)
 {
 	pid_t	pid;
 
@@ -88,7 +88,7 @@ pid_t	pipe_forking(t_command *cmd, t_env **env_vars, int *fd, int *prev_fd)
 		return (-1);
 	}
 	else if (pid == 0)
-		pipe_setup(cmd, env_vars, fd, prev_fd);
+		pipe_setup(cmd, env_vars, fd, prev_fd, gc);
 	else
 	{
 		if (*prev_fd != -1)
@@ -102,7 +102,7 @@ pid_t	pipe_forking(t_command *cmd, t_env **env_vars, int *fd, int *prev_fd)
 	return (pid);
 }
 
-void	piping(t_command *cmd, t_env **env_vars)
+void	piping(t_command *cmd, t_env **env_vars, t_gc *gc)
 {
 	int		fd[2];
 	int		prev_fd;
@@ -119,7 +119,7 @@ void	piping(t_command *cmd, t_env **env_vars)
 				return ;
 			}
 		}
-		pid = pipe_forking(cmd, env_vars, fd, &prev_fd);
+		pid = pipe_forking(cmd, env_vars, fd, &prev_fd, gc);
 		cmd = cmd->next;
 	}
 	if (prev_fd != -1)

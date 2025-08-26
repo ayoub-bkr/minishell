@@ -118,7 +118,7 @@ void expand_all_word_tokens(t_list *token_list, t_env *env_vars)
     }
 }
 
-int init(t_list **head, t_env *env_vars)
+int init(t_list **head, t_env *env_vars, t_gc *gc)
 {
 	// char *input = "echo'sjid'|echo -n";
 	//input = "   ls -l | cat file.txt >> here.txt |||||    \"okey \" here\" nice\" right\" word\" something\"\"\"\"   <<<<<<<";
@@ -133,6 +133,7 @@ int init(t_list **head, t_env *env_vars)
 	input = readline("minishell$ ");
 	if (!input)
 	{
+		gc_clear(gc);
 		rl_clear_history();
 		write(1, "exit\n", 5);
 		exit(0);
