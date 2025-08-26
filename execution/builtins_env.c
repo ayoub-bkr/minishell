@@ -75,7 +75,7 @@ void	env_lstaddback(t_env **head, char *str)
 			tmp = tmp->next;
 		tmp->next = m;
 	}
-	m->var = str;
+	m->var = ft_strdup(str);
 	m->next = NULL;
 }
 
@@ -103,9 +103,11 @@ char	**env_filling(t_env *head)
 	i = 0;
 	tmp = head;
 	m = malloc(sizeof(char *) * (env_lstcount(head) + 1));
+	if (!m)
+		return (NULL);
 	while (tmp)
 	{
-		m[i++] = tmp->var;
+		m[i++] = ft_strdup(tmp->var);
 		tmp = tmp->next;
 	}
 	m[i] = NULL;

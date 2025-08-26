@@ -13,6 +13,8 @@
 #include <stdbool.h>
 
 //----------------------------------- execution -----------------------------------
+extern int	g_exit_status;
+
 typedef struct s_env
 {
 	char			*var;
@@ -57,18 +59,25 @@ void		expo_handler(t_command **command, t_env **env_vars);
 
 //builtins_main.c
 void		bi_pwd();
+void		bi_exit(char **args);
 void		bi_echo(char **args);
 void		bi_handler(t_command **command, t_env **env_vars);
 int			bi_checker(char *command);
 
+//extern_cmd.c
+void		exiting(int	status);
+char		*get_path(t_env *env_vars, char *cmd);
+void		ext_handler(t_command *command, t_env *env_vars);
+
 //heredoc.c
-void		heredoc_init(t_command *command);
 void		heredoc(t_redir *redir);
+void		heredoc_init(t_command *command);
 
 //pipeline.c
 void		pipe_ext_handler(t_command *command, t_env *env_vars);
-void		pipe_setup(t_command *cmd, int *fd, int *prev_fd);
-void		pipe_handler(t_command *cmd, t_env **env_vars, int *fd, int *prev_fd);
+void		pipe_waiting(pid_t pid);
+void		pipe_setup(t_command *cmd, t_env **env_vars, int *fd, int *prev_fd);
+pid_t		pipe_forking(t_command *cmd, t_env **env_vars, int *fd, int *prev_fd);
 void		piping(t_command *cmd, t_env **env_vars);
 
 //redirection.c
@@ -78,10 +87,10 @@ void		red_append(t_redir *redir);
 void		redirecting(t_redir *redir);
 
 //main.c
-char		*get_path(t_env *env_vars, char *cmd);
-void		ext_handler(t_command *command, t_env *env_vars);
 void		ctrl_c(int s);
 void		cmd_freeing(t_command **command);
+void		executing(t_command **command, t_env **env_vars);
+void		minishell_main(t_command **command, t_env **env_vars, t_list **head);
 
 //utils_1.c
 int			ft_strcmp(char *s1, char *s2);
@@ -97,7 +106,7 @@ char		**split_freeing(char **m, int i);
 char		**ft_split(char *s, char c);
 
 //utils_3.c
-int			ft_isdigit(int c);
+int			ft_isdigit(char *str);
 int			ft_isalpha(int c);
 void		ft_putstr(char *str, int nl);
 void		ft_putstrs(char **strs, int nl);

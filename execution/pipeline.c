@@ -17,13 +17,43 @@ void	pipe_ext_handler(t_command *command, t_env *env_vars)
 	char	**new_envp;
 	char	*path;
 
-	path = ft_strjoin("/bin/", command->args[0]);
+	if (ft_strchr(command->args[0], '/'))
+		path = command->args[0];
+	else
+		path = get_path(env_vars, command->args[0]);
+	if (!path)
+	{
+		fprintf(stderr, "%s: command not found\n", command->args[0]);
+		exiting(1);
+	}
 	new_envp = env_filling(env_vars);
-	execve(path, command->args, new_envp);
-	exit(1);
+	if (execve(path, command->args, new_envp) == -1)
+	{
+		fprintf(stderr, "%s: command not found\n", command->args[0]);
+		exiting(1);
+	}
 }
 
-void	pipe_setup(t_command *cmd, int *fd, int *prev_fd)
+void	pipe_waiting(pid_t pid)
+{
+	int		w_status;
+	pid_t	w_pid;
+
+	w_pid = 0;
+	while (w_pid != -1)
+	{
+		w_pid = wait(&w_status);
+		if (w_pid == pid)
+		{
+			if (WIFEXITED(w_status))
+				g_exit_status = WEXITSTATUS(w_status);
+			else
+				g_exit_status = 1;
+		}
+	}
+}
+
+void	pipe_setup(t_command *cmd, t_env **env_vars, int *fd, int *prev_fd)
 {
 	if (*prev_fd != -1)
 	{
@@ -36,25 +66,29 @@ void	pipe_setup(t_command *cmd, int *fd, int *prev_fd)
 		dup2(fd[1], STDOUT_FILENO);
 		close(fd[1]);
 	}
+	redirecting(cmd->redir);
+	if (bi_checker(cmd->args[0]))
+	{
+		bi_handler(&cmd, env_vars);
+		exiting(0);
+	}
+	else
+		pipe_ext_handler(cmd, *env_vars);
 }
 
-void	pipe_handler(t_command *cmd, t_env **env_vars, int *fd, int *prev_fd)
+pid_t	pipe_forking(t_command *cmd, t_env **env_vars, int *fd, int *prev_fd)
 {
 	pid_t	pid;
 
 	pid = fork();
-	if (pid == 0)
+	if (pid < 0)
 	{
-		pipe_setup(cmd, fd, prev_fd);
-		redirecting(cmd->redir);
-		if (bi_checker(cmd->args[0]))
-		{
-			bi_handler(&cmd, env_vars);
-			exit(0);
-		}
-		else
-			pipe_ext_handler(cmd, *env_vars);
+		g_exit_status = 1;
+		perror("fork");
+		return (-1);
 	}
+	else if (pid == 0)
+		pipe_setup(cmd, env_vars, fd, prev_fd);
 	else
 	{
 		if (*prev_fd != -1)
@@ -65,12 +99,14 @@ void	pipe_handler(t_command *cmd, t_env **env_vars, int *fd, int *prev_fd)
 			*prev_fd = fd[0];
 		}
 	}
+	return (pid);
 }
 
 void	piping(t_command *cmd, t_env **env_vars)
 {
 	int		fd[2];
 	int		prev_fd;
+	pid_t	pid;
 
 	prev_fd = -1;
 	while (cmd)
@@ -83,11 +119,10 @@ void	piping(t_command *cmd, t_env **env_vars)
 				return ;
 			}
 		}
-		pipe_handler(cmd, env_vars, fd, &prev_fd);
+		pid = pipe_forking(cmd, env_vars, fd, &prev_fd);
 		cmd = cmd->next;
 	}
 	if (prev_fd != -1)
 		close(prev_fd);
-	while (wait(NULL) > 0)
-		;
+	pipe_waiting(pid);
 }

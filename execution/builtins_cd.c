@@ -43,7 +43,8 @@ void	bi_cd(char **args, t_env *env_vars)
 		dir = bi_cd_home(env_vars, "HOME");
 		if (!dir)
 		{
-			write(2, "minishell: cd: HOME not set\n", 28);
+			fprintf(stderr, "cd: HOME not set\n");
+			g_exit_status = 1;
 			return ;
 		}
 	}
@@ -51,7 +52,9 @@ void	bi_cd(char **args, t_env *env_vars)
 		dir = args[1];
 	if (chdir(dir) == -1)
 	{
-		printf("cd: %s: %s\n", dir, strerror(errno));
+		fprintf(stderr, "cd: %s: %s\n", dir, strerror(errno));
+		g_exit_status = 1;
 		return ;
 	}
+	g_exit_status = 0;
 }

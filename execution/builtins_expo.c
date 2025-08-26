@@ -20,7 +20,7 @@ int	expo_valid_id(char *input)
 	while (input[i] && input[i] != '=')
 	{
 		if (ft_isalpha(input[i]) || input[i] == '_'
-			|| (ft_isdigit(input[i]) && i != 0))
+			|| (ft_isdigit(&input[i]) && i != 0))
 			i++;
 		else
 			return (0);
@@ -107,8 +107,9 @@ void	expo_handler(t_command **command, t_env **env_vars)
 		if (!expo_equal((*command)->args[i])
 			|| !expo_valid_id((*command)->args[i]))
 		{
-			printf("export: '%s': not a valid identifier\n", (*command)->args[i]);
-			return ;
+			printf("'%s': not a valid identifier\n", (*command)->args[i]);
+			g_exit_status = 1;
+			continue ;
 		}
 		else if (expo_already((*command)->args[i], *env_vars))
 			expo_lstedit((*command)->args[i], env_vars);

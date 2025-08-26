@@ -20,9 +20,14 @@ void	red_input(t_redir *redir)
 	if (fd < 0)
 	{
 		perror(redir->file);
-		exit(1);
+		exiting(1);
 	}
-	dup2(fd, STDIN_FILENO);
+	if (dup2(fd, STDIN_FILENO) == -1)
+	{
+		close(fd);
+		perror("dup2");
+		exiting(1);
+	}
 	close(fd);
 }
 
@@ -34,9 +39,14 @@ void	red_output(t_redir *redir)
 	if (fd < 0)
 	{
 		perror(redir->file);
-		exit(1);
+		exiting(1);
 	}
-	dup2(fd, STDOUT_FILENO);
+	if (dup2(fd, STDOUT_FILENO) == -1)
+	{
+		close(fd);
+		perror("dup2");
+		exiting(1);
+	}
 	close(fd);
 }
 
@@ -48,30 +58,37 @@ void	red_append(t_redir *redir)
 	if (fd < 0)
 	{
 		perror(redir->file);
-		exit(1);
+		exiting(1);
 	}
-	dup2(fd, STDOUT_FILENO);
+	if (dup2(fd, STDOUT_FILENO) == -1)
+	{
+		close(fd);
+		perror("dup2");
+		exiting(1);
+	}
 	close(fd);
 }
 
 void	redirecting(t_redir *redir)
 {
-	t_redir	*tmp;
-
-	tmp = redir;
-	while (tmp)
+	while (redir)
 	{
-		if (tmp->type == 0)
-			red_input(tmp);
-		else if (tmp->type == 1)
-			red_output(tmp);
-		else if (tmp->type == 2)
-			red_append(tmp);
-		else if (tmp->type == 3)
+		if (redir->type == 0)
+			red_input(redir);
+		else if (redir->type == 1)
+			red_output(redir);
+		else if (redir->type == 2)
+			red_append(redir);
+		else if (redir->type == 3)
 		{
-			dup2(tmp->heredoc_fd, STDIN_FILENO);
-			close(tmp->heredoc_fd);
+			if (dup2(redir->heredoc_fd, STDIN_FILENO) == -1)
+			{
+				close(redir->heredoc_fd);
+				perror("dup2");
+				exiting(1);
+			}
+			close(redir->heredoc_fd);
 		}
-		tmp = tmp->next;
+		redir = redir->next;
 	}
 }
