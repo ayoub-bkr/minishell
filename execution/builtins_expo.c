@@ -94,7 +94,7 @@ void	expo_lstedit(char *input, t_env **env_vars)
 	}
 }
 
-void	expo_handler(t_command **command, t_env **env_vars, t_gc *gc)
+void	expo_handler(t_command **command, t_env **env_vars)
 {
 	char	*tmp;
 	int		i;
@@ -109,6 +109,7 @@ void	expo_handler(t_command **command, t_env **env_vars, t_gc *gc)
 		{
 			printf("'%s': not a valid identifier\n", (*command)->args[i]);
 			g_exit_status = 1;
+			i++;
 			continue ;
 		}
 		else if (expo_already((*command)->args[i], *env_vars))
@@ -117,7 +118,7 @@ void	expo_handler(t_command **command, t_env **env_vars, t_gc *gc)
 		{
 			tmp = ft_strdup((*command)->args[i]);
 			if (tmp)
-				env_lstaddback(env_vars, tmp, gc);
+				env_lstaddback(env_vars, tmp);
 		}
 		i++;
 	}

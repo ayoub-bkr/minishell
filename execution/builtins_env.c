@@ -58,13 +58,12 @@ void	env_lstremove(t_env **head, char **cmds)
 	}
 }
 
-void	env_lstaddback(t_env **head, char *str, t_gc *gc)
+void	env_lstaddback(t_env **head, char *str)
 {
 	t_env	*tmp;
 	t_env	*m;
 
-	// m = malloc(sizeof(t_env));
-	m = gc_malloc(gc, sizeof(t_env));
+	m = malloc(sizeof(t_env));
 	if (!m)
 		return ;
 	if (!*head || !(*head)->var)
@@ -76,8 +75,7 @@ void	env_lstaddback(t_env **head, char *str, t_gc *gc)
 			tmp = tmp->next;
 		tmp->next = m;
 	}
-	// m->var = ft_strdup(str);
-	m->var = gc_strdup(gc, str);
+	m->var = ft_strdup(str);
 	m->next = NULL;
 }
 

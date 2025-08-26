@@ -74,11 +74,11 @@ void	bi_echo(char **args)
 	ft_putstrs(&args[i], n);
 }
 
-void	bi_handler(t_command **command, t_env **env_vars, t_gc *gc)
+void	bi_handler(t_command **command, t_env **env_vars)
 {
 	redirecting((*command)->redir);
 	if (ft_strcmp((*command)->args[0], "export"))
-		expo_handler(command, env_vars, gc);
+		expo_handler(command, env_vars);
 	else if (ft_strcmp((*command)->args[0], "env") && !(*command)->args[1])
 		env_printing(*env_vars, 0);
 	else if (ft_strcmp((*command)->args[0], "unset"))

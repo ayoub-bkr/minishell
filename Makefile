@@ -1,4 +1,4 @@
-SRC = main.c gc.c \
+SRC = main.c \
 	execution/builtins_cd.c \
 	execution/builtins_env.c \
 	execution/builtins_expo.c \

@@ -68,16 +68,11 @@ typedef enum {
     IN_DOUBLE
 } quote_state;
 
-typedef struct s_gc_node
-{
-	void					*ptr;
-	struct s_gc_node		*next;
-}							t_gc_node;
-
 typedef struct s_gc
 {
-	t_gc_node				*list;
-}							t_gc;
+	void			*ptr;
+	struct s_gc		*next;
+}					t_gc;
 
 //builtins_cd.c
 char		*bi_cd_home(t_env *env_vars, char *str);
@@ -86,7 +81,7 @@ void		bi_cd(char **args, t_env *env_vars);
 //builtins_env.c
 void		env_printing(t_env *env_vars, int expo);
 void		env_lstremove(t_env **head, char **cmds);
-void		env_lstaddback(t_env **head, char *str, t_gc *gc);
+void		env_lstaddback(t_env **head, char *str);
 int			env_lstcount(t_env *head);
 char		**env_filling(t_env *head);
 
@@ -95,13 +90,13 @@ int			expo_valid_id(char *input);
 int			expo_equal(char *input);
 int			expo_already(char *input, t_env *command);
 void		expo_lstedit(char *input, t_env **env_vars);
-void		expo_handler(t_command **command, t_env **env_vars, t_gc *gc);
+void		expo_handler(t_command **command, t_env **env_vars);
 
 //builtins_main.c
 void		bi_pwd();
 void		bi_exit(char **args);
 void		bi_echo(char **args);
-void		bi_handler(t_command **command, t_env **env_vars, t_gc *gc);
+void		bi_handler(t_command **command, t_env **env_vars);
 int			bi_checker(char *command);
 
 //extern_cmd.c
@@ -116,9 +111,9 @@ void		heredoc_init(t_command *command);
 //pipeline.c
 void		pipe_ext_handler(t_command *command, t_env *env_vars);
 void		pipe_waiting(pid_t pid);
-void		pipe_setup(t_command *cmd, t_env **env_vars, int *fd, int *prev_fd, t_gc *gc);
-pid_t		pipe_forking(t_command *cmd, t_env **env_vars, int *fd, int *prev_fd, t_gc *gc);
-void		piping(t_command *cmd, t_env **env_vars, t_gc *gc);
+void		pipe_setup(t_command *cmd, t_env **env_vars, int *fd, int *prev_fd);
+pid_t		pipe_forking(t_command *cmd, t_env **env_vars, int *fd, int *prev_fd);
+void		piping(t_command *cmd, t_env **env_vars);
 
 //redirection.c
 void    	red_input(t_redir *redir);
@@ -145,18 +140,11 @@ int			ft_isalpha(int c);
 void		ft_putstr(char *str, int nl);
 void		ft_putstrs(char **strs, int nl);
 
-//gc.c
-void		*gc_malloc(t_gc *gc, size_t size);
-char		*gc_strdup(t_gc *gc, const char *s);
-void		gc_add(t_gc *gc, void *ptr);
-void		gc_clear(t_gc *gc);
-void		gc_free(t_gc *gc, void *ptr);
-
 //main.c
 void		ctrl_c(int s);
 void		cmd_freeing(t_command **command);
-void		executing(t_command **command, t_env **env_vars, t_gc *gc);
-void		minishell_main(t_command **command, t_env **env_vars, t_list **head, t_gc *gc);
+void		executing(t_command **command, t_env **env_vars);
+void		minishell_main(t_command **command, t_env **env_vars, t_list **head);
 
 
 
@@ -179,12 +167,12 @@ typedef struct
 	int w_q_len;
 } t_string;
 
-void create_key_vaue(t_env *single_var, t_gc *gc);
-void create_key_value_pairs(t_env *env_vars, t_gc *gc);
-char *get_key(char *s, t_gc *gc);
-char *get_value(char *s, t_gc *gc);
+void create_key_vaue(t_env *single_var);
+void create_key_value_pairs(t_env *env_vars);
+char *get_key(char *s);
+char *get_value(char *s);
 
-int init(t_list **head, t_env *env_vars, t_gc *gc);
+int init(t_list **head, t_env *env_vars);
 void *ft_memcpy(void *dest, void *src, int n);
 Token *ft_newtoken(char *s, TokenType type);
 t_list *ft_lstnew(Token *token);
