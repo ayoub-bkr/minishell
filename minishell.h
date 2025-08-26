@@ -13,6 +13,7 @@
 #include <stdbool.h>
 
 //----------------------------------- execution -----------------------------------
+
 extern int	g_exit_status;
 
 typedef struct s_env
@@ -38,6 +39,36 @@ typedef struct s_command
 	int					pipe_out;
 	struct s_command	*next;
 }						t_command;
+
+typedef enum
+{
+	T_WORD,
+	T_PIPE,
+	T_RED_IN,
+	T_RED_OUT,
+	T_APPEND,
+	T_HEREDOC
+} TokenType;
+
+typedef struct
+{
+	char *str;
+	TokenType type;
+} Token;
+
+typedef struct list
+{
+	Token 		*token;
+	struct list	*next;
+}	t_list;
+
+typedef enum {
+    UNQUOTED,
+    IN_SINGLE,
+    IN_DOUBLE
+} quote_state;
+
+
 
 //builtins_cd.c
 char		*bi_cd_home(t_env *env_vars, char *str);
@@ -111,40 +142,9 @@ int			ft_isalpha(int c);
 void		ft_putstr(char *str, int nl);
 void		ft_putstrs(char **strs, int nl);
 
-//parsing.c
-// void		cmd_lstaddback(t_command **head, t_command *new);
-// int			count_tokens(char **tokens);
-// t_redir		*redir_new(char *file, int type);
-// void		redir_addback(t_redir **head, t_redir *new);
-// t_command	*parsing(char *cmd_str);
-// char		*ft_lstgetvar(t_env *command, char *str);
-// char		*replace_variable(t_env *env_vars, char *input);
-// void		ft_lstfree(t_env **head);
-// void		init(t_command **command, t_env **env_vars);
-
 //----------------------------------- parsing -----------------------------------
 
-typedef enum
-{
-	T_WORD,
-	T_PIPE,
-	T_RED_IN,
-	T_RED_OUT,
-	T_APPEND,
-	T_HEREDOC
-} TokenType;
 
-typedef struct
-{
-	char *str;
-	TokenType type;
-} Token;
-
-typedef struct list
-{
-	Token 		*token;
-	struct list	*next;
-}	t_list;
 
 void debug_print_all(t_list *tokens, t_command *commands);
 
@@ -162,7 +162,12 @@ typedef struct
 	int w_q_len;
 } t_string;
 
-int init(t_list **head);
+void create_key_vaue(t_env *single_var);
+void create_key_value_pairs(t_env *env_vars);
+char *get_key(char *s);
+char *get_value(char *s);
+
+int init(t_list **head, t_env *env_vars);
 void *ft_memcpy(void *dest, void *src, int n);
 Token *ft_newtoken(char *s, TokenType type);
 t_list *ft_lstnew(Token *token);
@@ -198,3 +203,5 @@ void		redir_addback(t_redir **head, t_redir *new);
 void parsing(t_command **command, t_list *head);
 void print_list(t_list *head);
 void print_command(t_command *head);
+// expansion
+void process_token_expansion(Token *token, t_env *env_vars);

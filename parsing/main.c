@@ -106,9 +106,19 @@ int syntax_error(t_list *head)
 	return (status);
 }
 	
+void expand_all_word_tokens(t_list *token_list, t_env *env_vars)
+{
+    t_list *cur = token_list;
+    
+    while (cur)
+    {
+        if (cur->token->type == T_WORD)
+            process_token_expansion(cur->token, env_vars);
+        cur = cur->next;
+    }
+}
 
-
-int init(t_list **head)
+int init(t_list **head, t_env *env_vars)
 {
 	// char *input = "echo'sjid'|echo -n";
 	//input = "   ls -l | cat file.txt >> here.txt |||||    \"okey \" here\" nice\" right\" word\" something\"\"\"\"   <<<<<<<";
@@ -140,6 +150,7 @@ int init(t_list **head)
 		free(input);
 		return (0);
 	}
+	expand_all_word_tokens(*head, env_vars);
 	free(input);
 	return (status);
 }

@@ -76,11 +76,12 @@ int	main(int ac, char **av, char **envp)
 	head = NULL;
 	while (*envp)
 		env_lstaddback(&env_vars, *envp++);
+	create_key_value_pairs(env_vars);
 	while (1)
 	{
 		signal(SIGINT, ctrl_c);
 		signal(SIGQUIT, SIG_IGN);
-		init(&head);
+		init(&head, env_vars);
 		parsing(&command, head);
 		heredoc_init(command);
 		if (!command)
