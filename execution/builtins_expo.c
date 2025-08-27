@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtins_expo.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aboukent <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: seraph <seraph@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/24 19:30:33 by aboukent          #+#    #+#             */
-/*   Updated: 2025/08/24 19:30:34 by aboukent         ###   ########.fr       */
+/*   Updated: 2025/08/26 23:50:45 by seraph           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ int	expo_valid_id(char *input)
 	while (input[i] && input[i] != '=')
 	{
 		if (ft_isalpha(input[i]) || input[i] == '_'
-			|| (ft_isdigit(&input[i]) && i != 0))
+			|| ((input[i] >= '0' && input[i] <= '9') && i != 0))
 			i++;
 		else
 			return (0);
@@ -70,7 +70,6 @@ int	expo_already(char *input, t_env *command)
 void	expo_lstedit(char *input, t_env **env_vars)
 {
 	int		i;
-	char	*to_free;
 	t_env	*tmp;
 
 	tmp = *env_vars;
@@ -85,9 +84,12 @@ void	expo_lstedit(char *input, t_env **env_vars)
 		}
 		if (input[i] == '=' && tmp->var[i] == '=')
 		{
-			to_free = tmp->var;
+			free(tmp->var);
 			tmp->var = ft_strdup(input);
-			free(to_free);
+			free(tmp->key);
+			free(tmp->value);
+			tmp->key = get_key(input);
+			tmp->value = get_value(input);
 			return ;
 		}
 		tmp = tmp->next;
@@ -96,7 +98,7 @@ void	expo_lstedit(char *input, t_env **env_vars)
 
 void	expo_handler(t_command **command, t_env **env_vars)
 {
-	char	*tmp;
+	t_env	*new_var;
 	int		i;
 
 	if ((*command)->args[0] && !(*command)->args[1])
@@ -114,12 +116,20 @@ void	expo_handler(t_command **command, t_env **env_vars)
 		}
 		else if (expo_already((*command)->args[i], *env_vars))
 			expo_lstedit((*command)->args[i], env_vars);
-		else
+		else if (!*env_vars)
 		{
-			tmp = ft_strdup((*command)->args[i]);
-			if (tmp)
-				env_lstaddback(env_vars, tmp);
+			new_var = malloc(sizeof(t_env));
+			if (new_var)
+			{
+				new_var->var = ft_strdup((*command)->args[i]);
+				new_var->key = get_key((*command)->args[i]);
+				new_var->value = get_value((*command)->args[i]);
+				new_var->next = NULL;
+				*env_vars = new_var;
+			}
 		}
+		else
+			env_lstaddback(env_vars, (*command)->args[i]);
 		i++;
 	}
 }

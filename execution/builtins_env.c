@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtins_env.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aboukent <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: seraph <seraph@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/24 19:30:10 by aboukent          #+#    #+#             */
-/*   Updated: 2025/08/24 19:30:16 by aboukent         ###   ########.fr       */
+/*   Updated: 2025/08/26 23:50:45 by seraph           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,10 @@ void	env_lstaddback(t_env **head, char *str)
 	m = gc_calloc(sizeof(t_env));
 	if (!m)
 		return ;
+	m->var = ft_strdup(str);
+	m->key = get_key(str);
+	m->value = get_value(str);
+	m->next = NULL;
 	if (!*head || !(*head)->var)
 		*head = m;
 	else
@@ -75,8 +79,6 @@ void	env_lstaddback(t_env **head, char *str)
 			tmp = tmp->next;
 		tmp->next = m;
 	}
-	m->var = ft_strdup(str);
-	m->next = NULL;
 }
 
 int	env_lstcount(t_env *head)

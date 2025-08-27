@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtins_main.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aboukent <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: seraph <seraph@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/24 19:30:45 by aboukent          #+#    #+#             */
-/*   Updated: 2025/08/24 19:30:47 by aboukent         ###   ########.fr       */
+/*   Updated: 2025/08/27 00:32:58 by seraph           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,19 +18,20 @@ void	bi_pwd(void)
 
 	cwd_buf = getcwd(NULL, 0);
 	if (!cwd_buf)
-		perror("getcwd");
-	else
 	{
-		ft_putstr(cwd_buf, 1);
-		free(cwd_buf);
+		perror("getcwd");
+		g_exit_status = 1;
+		return;
 	}
+	ft_putstr(cwd_buf, 1);
+	free(cwd_buf);
+	g_exit_status = 0;
 }
 
 void	bi_exit(char **args)
 {
 	int	status;
 
-	status = 0;
 	fprintf(stdout, "exit\n");
 	if (args[1])
 	{
@@ -47,6 +48,8 @@ void	bi_exit(char **args)
 		}
 		status = atoi(args[1]);
 	}
+	else
+		status = g_exit_status;  // Use the last command's exit status
 	exiting(status);
 }
 
@@ -56,6 +59,8 @@ void	bi_echo(char **args)
 	int	n;
 	int	j;
 
+	if (!args)
+		return;
 	i = 1;
 	n = 1;
 	while (args[i] && args[i][0] == '-' && args[i][1] == 'n')
@@ -74,23 +79,39 @@ void	bi_echo(char **args)
 	ft_putstrs(&args[i], n);
 }
 
-void	bi_handler(t_command **command, t_env **env_vars)
+int	bi_handler(t_command **command, t_env **env_vars)
 {
+	int status = 0;
 	redirecting((*command)->redir);
-	if (ft_strcmp((*command)->args[0], "export"))
+	if (ft_strcmp((*command)->args[0], "export")) {
 		expo_handler(command, env_vars);
-	else if (ft_strcmp((*command)->args[0], "env") && !(*command)->args[1])
+		status = g_exit_status;
+	}
+	else if (ft_strcmp((*command)->args[0], "env") && !(*command)->args[1]) {
 		env_printing(*env_vars, 0);
-	else if (ft_strcmp((*command)->args[0], "unset"))
+		status = 0;
+	}
+	else if (ft_strcmp((*command)->args[0], "unset")) {
 		env_lstremove(env_vars, &(*command)->args[1]);
-	else if (ft_strcmp((*command)->args[0], "pwd"))
+		status = 0;
+	}
+	else if (ft_strcmp((*command)->args[0], "pwd")) {
 		bi_pwd();
-	else if (ft_strcmp((*command)->args[0], "cd"))
+		status = 0;
+	}
+	else if (ft_strcmp((*command)->args[0], "cd")) {
 		bi_cd((*command)->args, *env_vars);
-	else if (ft_strcmp((*command)->args[0], "echo"))
+		status = g_exit_status;
+	}
+	else if (ft_strcmp((*command)->args[0], "echo")) {
 		bi_echo((*command)->args);
-	else if (ft_strcmp((*command)->args[0], "exit"))
+		status = 0;
+	}
+	else if (ft_strcmp((*command)->args[0], "exit")) {
 		bi_exit((*command)->args);
+		status = g_exit_status;
+	}
+	return status;
 }
 
 int	bi_checker(char *command)

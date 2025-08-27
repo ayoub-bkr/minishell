@@ -35,35 +35,43 @@ char	*get_path(t_env *env_vars, char *cmd)
 	return (NULL);
 }
 
-void	ext_handler(t_command *command, t_env *env_vars)
+int	ext_handler(t_command *command, t_env *env_vars)
 {
 	pid_t	pid;
 	char	**new_envp;
 	char	*path;
+	int		status;
 
-pid = fork();
-path = NULL;
-new_envp = NULL;
-if (!pid)
-{
-	if (ft_strchr(command->args[0], '/'))
-		path = command->args[0];
-	else
-		path = get_path(env_vars, command->args[0]);
-	if (command->redir)
-		redirecting(command->redir);
-	if (!path)
+	pid = fork();
+	path = NULL;
+	new_envp = NULL;
+	if (!pid)
 	{
-		fprintf(stderr, "%s: command not found\n", command->args[0]);
-		exiting(1);
+		if (ft_strchr(command->args[0], '/'))
+			path = command->args[0];
+		else
+			path = get_path(env_vars, command->args[0]);
+		if (command->redir)
+			redirecting(command->redir);
+		if (!path)
+		{
+			fprintf(stderr, "%s: command not found\n", command->args[0]);
+			exiting(127);
+		}
+		new_envp = env_filling(env_vars);
+		if (execve(path, command->args, new_envp) == -1)
+		{
+			fprintf(stderr, "%s: command not found\n", command->args[0]);
+			exiting(127);
+		}
 	}
-	new_envp = env_filling(env_vars);
-	if (execve(path, command->args, new_envp) == -1)
+	else if (pid > 0)
 	{
-		fprintf(stderr, "%s: command not found\n", command->args[0]);
-		exiting(1);
+		waitpid(pid, &status, 0);
+		if (WIFEXITED(status))
+			return WEXITSTATUS(status);
+		else if (WIFSIGNALED(status))
+			return 128 + WTERMSIG(status);
 	}
-}
-else if (pid > 0)
-	waitpid(pid, NULL, 0);
+	return 1;
 }

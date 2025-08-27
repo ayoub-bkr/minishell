@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipeline.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aboukent <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: seraph <seraph@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/24 19:31:15 by aboukent          #+#    #+#             */
-/*   Updated: 2025/08/24 19:31:17 by aboukent         ###   ########.fr       */
+/*   Updated: 2025/08/27 00:32:58 by seraph           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,11 @@ void	pipe_ext_handler(t_command *command, t_env *env_vars)
 	char	**new_envp;
 	char	*path;
 
+	if (!command || !command->args || !command->args[0])
+	{
+		fprintf(stderr, "Invalid command\n");
+		exiting(1);
+	}
 	if (ft_strchr(command->args[0], '/'))
 		path = command->args[0];
 	else
