@@ -12,6 +12,22 @@
 
 #include "../minishell.h"
 
+int	expo_valid_id(char *input)
+{
+	int	i;
+
+	i = 0;
+	while (input[i] && input[i] != '=')
+	{
+		if (ft_isalpha(input[i]) || input[i] == '_'
+			|| ((input[i] >= '0' && input[i] <= '9') && i != 0))
+			i++;
+		else
+			return (0);
+	}
+	return (1);
+}
+
 char	*bi_cd_home(t_env *env_vars, char *str)
 {
 	int		i;

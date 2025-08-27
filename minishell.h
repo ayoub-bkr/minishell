@@ -75,6 +75,7 @@ typedef struct s_gc
 }					t_gc;
 
 //builtins_cd.c
+int			expo_valid_id(char *input);
 char		*bi_cd_home(t_env *env_vars, char *str);
 void		bi_cd(char **args, t_env *env_vars);
 
@@ -86,10 +87,10 @@ int			env_lstcount(t_env *head);
 char		**env_filling(t_env *head);
 
 //builtins_expo.c
-int			expo_valid_id(char *input);
 int			expo_equal(char *input);
 int			expo_already(char *input, t_env *command);
 void		expo_lstedit(char *input, t_env **env_vars);
+void		expo_env_init(t_command **command, t_env **env_vars, int i);
 void		expo_handler(t_command **command, t_env **env_vars);
 
 //builtins_main.c
@@ -140,14 +141,17 @@ int			ft_isalpha(int c);
 void		ft_putstr(char *str, int nl);
 void		ft_putstrs(char **strs, int nl);
 
+//gc.c
+void	ft_bzero(void *s, size_t n);
+void	*gc_calloc(int size);
+
 //main.c
 void		ctrl_c(int s);
 void		cmd_freeing(t_command **command);
 void		executing(t_command **command, t_env **env_vars);
 void		minishell_main(t_command **command, t_env **env_vars, t_list **head);
 
-void	ft_bzero(void *s, size_t n);
-void	*gc_calloc(int size);
+
 
 //----------------------------------- parsing -----------------------------------
 

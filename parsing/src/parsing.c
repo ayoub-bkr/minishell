@@ -104,6 +104,8 @@ void parsing(t_command **command, t_list *head)
 		}
 		else if (cur->token->type == T_RED_IN)
 		{
+			if (cur->token->str)
+				printf("----------");
 			cur = cur->next;
 			redir_addback(&cmd->redir, redir_new(ft_strdup(cur->token->str), 0));
 		}

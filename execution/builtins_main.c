@@ -21,7 +21,7 @@ void	bi_pwd(void)
 	{
 		perror("getcwd");
 		g_exit_status = 1;
-		return;
+		return ;
 	}
 	ft_putstr(cwd_buf, 1);
 	free(cwd_buf);
@@ -49,7 +49,7 @@ void	bi_exit(char **args)
 		status = atoi(args[1]);
 	}
 	else
-		status = g_exit_status;  // Use the last command's exit status
+		status = g_exit_status;
 	exiting(status);
 }
 
@@ -60,7 +60,7 @@ void	bi_echo(char **args)
 	int	j;
 
 	if (!args)
-		return;
+		return ;
 	i = 1;
 	n = 1;
 	while (args[i] && args[i][0] == '-' && args[i][1] == 'n')
@@ -81,37 +81,31 @@ void	bi_echo(char **args)
 
 int	bi_handler(t_command **command, t_env **env_vars)
 {
-	int status = 0;
+	int	status;
+
+	status = 0;
 	redirecting((*command)->redir);
-	if (ft_strcmp((*command)->args[0], "export")) {
+	if (ft_strcmp((*command)->args[0], "export"))
+	{
 		expo_handler(command, env_vars);
 		status = g_exit_status;
 	}
-	else if (ft_strcmp((*command)->args[0], "env") && !(*command)->args[1]) {
-		env_printing(*env_vars, 0);
-		status = 0;
-	}
-	else if (ft_strcmp((*command)->args[0], "unset")) {
-		env_lstremove(env_vars, &(*command)->args[1]);
-		status = 0;
-	}
-	else if (ft_strcmp((*command)->args[0], "pwd")) {
-		bi_pwd();
-		status = 0;
-	}
-	else if (ft_strcmp((*command)->args[0], "cd")) {
+	else if (ft_strcmp((*command)->args[0], "cd"))
+	{
 		bi_cd((*command)->args, *env_vars);
 		status = g_exit_status;
 	}
-	else if (ft_strcmp((*command)->args[0], "echo")) {
-		bi_echo((*command)->args);
-		status = 0;
-	}
-	else if (ft_strcmp((*command)->args[0], "exit")) {
+	else if (ft_strcmp((*command)->args[0], "exit"))
 		bi_exit((*command)->args);
-		status = g_exit_status;
-	}
-	return status;
+	else if (ft_strcmp((*command)->args[0], "env") && !(*command)->args[1])
+		env_printing(*env_vars, 0);
+	else if (ft_strcmp((*command)->args[0], "unset"))
+		env_lstremove(env_vars, &(*command)->args[1]);
+	else if (ft_strcmp((*command)->args[0], "pwd"))
+		bi_pwd();
+	else if (ft_strcmp((*command)->args[0], "echo"))
+		bi_echo((*command)->args);
+	return (status);
 }
 
 int	bi_checker(char *command)
