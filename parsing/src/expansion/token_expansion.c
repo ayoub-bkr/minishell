@@ -1,12 +1,26 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   token_expansion.c                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mohel-mo <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/27 18:31:58 by mohel-mo          #+#    #+#             */
+/*   Updated: 2025/08/27 18:31:59 by mohel-mo         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../../minishell.h"
 
 void	expand_token(char *original, t_string *result, t_env *env_vars)
 {
-	int		i;
-	char	current_quote;
+	int					i;
+	char				current_quote;
+	t_expand_context	ctx;
 
 	i = 0;
 	current_quote = 0;
+	ctx = (t_expand_context){original, &i, current_quote, result, env_vars};
 	while (original[i])
 	{
 		if (original[i] == '\'' && current_quote != '"')
@@ -20,7 +34,7 @@ void	expand_token(char *original, t_string *result, t_env *env_vars)
 			i++;
 		}
 		else if (original[i] == '$' && current_quote != '\'')
-			handle_dollar_sign(original, &i, current_quote, result, env_vars);
+			handle_dollar_sign(&ctx);
 		else
 			string_append_char(result, original[i++]);
 	}

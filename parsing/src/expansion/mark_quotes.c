@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   mark_quotes.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mohel-mo <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/27 18:31:11 by mohel-mo          #+#    #+#             */
+/*   Updated: 2025/08/27 18:31:13 by mohel-mo         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../../minishell.h"
 
 void	*ft_memcpy(void *dest, void *src, int n)
@@ -71,7 +83,12 @@ char	*get_env_value(char *var_name, t_env *env_vars)
 	while (cur)
 	{
 		if (cur->key && ft_strcmp(cur->key, var_name) == 1)
-			return (cur->value ? cur->value : "");
+		{
+			if (cur->value)
+				return (cur->value);
+			else
+				return ("");
+		}
 		cur = cur->next;
 	}
 	return ("");

@@ -88,6 +88,15 @@ typedef struct string
 	int					w_q_len;
 }						t_string;
 
+typedef struct s_expand_context
+{
+    char    *original;
+    int     *i;
+    char    current_quote;
+    t_string *result;
+    t_env   *env_vars;
+} t_expand_context;
+
 //------------------- execution -------------------
 
 // builtins_cd.c
@@ -206,6 +215,4 @@ void					handle_redirection(t_list **cur, t_command *cmd,
 							int type);
 void					string_append_char(t_string *str, char c);
 void					handle_quote(char quote, char *current_quote);
-void					handle_dollar_sign(char *original, int *i,
-							char current_quote, t_string *result,
-							t_env *env_vars);
+void					handle_dollar_sign(t_expand_context *ctx);

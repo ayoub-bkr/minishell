@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   expansion_handle.c                                 :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mohel-mo <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/27 18:30:24 by mohel-mo          #+#    #+#             */
+/*   Updated: 2025/08/27 18:30:25 by mohel-mo         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../../minishell.h"
 
 void	handle_quote(char quote, char *current_quote)
@@ -41,17 +53,16 @@ void	handle_env_var(char *original, int *i, t_string *result,
 	}
 }
 
-void	handle_dollar_sign(char *original, int *i, char current_quote,
-		t_string *result, t_env *env_vars)
+void	handle_dollar_sign(t_expand_context *ctx)
 {
-	(void)current_quote;
-	if (original[*i + 1] && original[*i + 1] == '?')
+	if (ctx->original[*ctx->i + 1] && ctx->original[*ctx->i + 1] == '?')
 	{
-		handle_exit_status(result);
-		*i += 2;
+		handle_exit_status(ctx->result);
+		*ctx->i += 2;
 	}
-	else if (ft_isalpha(original[*i + 1]) || original[*i + 1] == '_')
-		handle_env_var(original, i, result, env_vars);
+	else if (ft_isalpha(ctx->original[*ctx->i + 1])
+		|| ctx->original[*ctx->i + 1] == '_')
+		handle_env_var(ctx->original, ctx->i, ctx->result, ctx->env_vars);
 	else
-		string_append_char(result, original[(*i)++]);
+		string_append_char(ctx->result, ctx->original[(*ctx->i)++]);
 }
