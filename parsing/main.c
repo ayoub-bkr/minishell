@@ -1,33 +1,19 @@
-#include "../minishell.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mohel-mo <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/27 02:21:17 by mohel-mo          #+#    #+#             */
+/*   Updated: 2025/08/27 02:21:20 by mohel-mo         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-void free_token_list(t_list **head)
-{
-    t_list *current = *head;
-    t_list *next;
-    
-    while (current)
-    {
-        next = current->next;
-        
-        // Free the token string (only if it exists - metacharacters have NULL str)
-        // if (current->token->str)
-        //     free(current->token->str);
-        
-        // // Free the token itself
-        // free(current->token);
-        
-        // // Free the list node
-        // free(current);
-        
-        current = next;
-    }
-    
-    *head = NULL;
-}
+#include "../minishell.h"
 
 int pipe_syntax_error(t_list *head)
 {
-	// TODO: handle if pipe is last node
 	if (!head)
 		return (0);
 	t_list *cur = head;
@@ -68,8 +54,8 @@ int redir_syntax_error(t_list *head)
 	if (!head)
 		return (0);
 	t_list *cur = head;
-	TokenType pttype;
-	TokenType cttype;
+	TokenType pttype = T_WORD; // previous token type 
+	TokenType cttype; // current toek type
 	while (cur)
 	{
 		cttype = cur->token->type;
@@ -103,6 +89,9 @@ int syntax_error(t_list *head)
 	status = redir_syntax_error(head);
 	if (!status)
 		return (0);
+	status = quote_syntax_error(head);
+	if (!status)
+		return (0);
 	return (status);
 }
 	
@@ -117,16 +106,34 @@ void expand_all_word_tokens(t_list *token_list, t_env *env_vars)
         cur = cur->next;
     }
 }
-
-int init(t_list **head, t_env *env_vars)
+void free_token_list(t_list **head)
 {
-	// char *input = "echo'sjid'|echo -n";
-	//input = "   ls -l | cat file.txt >> here.txt |||||    \"okey \" here\" nice\" right\" word\" something\"\"\"\"   <<<<<<<";
-	// input = "   echo |    \"okey \" here\" nice\" right\" word\" something\"\"\"\"   > echo << end";
-	// TODO: handle these cases
-	//input = "   \"\"\"\" ";
-	//input = "   l\"s\"" ";
-	//input = "   ls -l | cat file.txt >> here.txt     \"echo \"\"hello world\"\"\"\"\"\"\"   ";
+    t_list *current = *head;
+    t_list *next;
+    
+    while (current)
+    {
+        next = current->next;
+        
+        // Free the token string (only if it exists - metacharacters have NULL str)
+        if (current->token->str)
+            free(current->token->str);
+        
+        // Free the token itself
+        free(current->token);
+        
+        // Free the list node
+        free(current);
+        
+        current = next;
+    }
+    
+    *head = NULL;
+}
+
+
+int  init(t_list **head, t_env *env_vars)
+{
 	char	*input;
 	int status = 1;
 
@@ -140,14 +147,10 @@ int init(t_list **head, t_env *env_vars)
 	}
 	else
 		add_history(input);
-	// TODO: you have to know each return of each function!
-	// if it doesn't work as expected move to next command after 
-	// you set everything to default
 	tokenize(input, head);
 	status = syntax_error(*head);
 	if (!status)
 	{
-		free_token_list(head);
 		free(input);
 		return (0);
 	}
@@ -155,65 +158,3 @@ int init(t_list **head, t_env *env_vars)
 	free(input);
 	return (status);
 }
-
-// void	cmd_freeing(t_command **command)
-// {
-// 	t_command	*tmp;
-// 	int			i;
-
-// 	while (*command)
-// 	{
-// 		tmp = (*command)->next;
-// 		i = 0;
-// 		while ((*command)->args[i])
-// 			free((*command)->args[i++]);
-// 		free((*command)->args);
-// 		free(*command);
-// 		*command = tmp;
-// 	}
-// 	*command = NULL;
-// }
-
-void	print_kolchi(t_command *command)
-{
-	int	i = 0;
-
-	while (command)
-	{
-		i = 0;
-		printf("-------\n");
-		while (command->args[i])
-			printf("args : %s\n", command->args[i++]);
-		while (command->redir)
-		{
-			printf("file : %s\n type : %d\n", command->redir->file, command->redir->type);
-			command->redir = command->redir->next;
-		}
-		command = command->next;
-	}
-	
-}
-
-// int main()
-// {
-// 	t_list *head;
-// 	t_command *command;
-// 	command = NULL;
-// 	head = NULL;
-// 	// printf("cmd: %s\n", input);
-
-// 	while (1)
-// 	{
-// 		init(&head);
-// 		parsing(&command, head);
-// 		print_kolchi(command);
-// 		cmd_freeing(&command);
-// 		free(head);
-// 		head = NULL;
-// 	}
-	
-
-// 	// print_list(head);
-// 	// debug_print_all(head, command);
-// 	return (0);
-// }

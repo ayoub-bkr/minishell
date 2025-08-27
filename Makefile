@@ -13,20 +13,12 @@ SRC = main.c gc.c\
 	parsing/src/parsing.c  \
 	parsing/main.c \
 	  parsing/src/expansion/mark_quotes.c  \
-	  parsing/src/ad_print.c  \
-	  parsing/src/printing.c  \
+	  parsing/src/expansion/quote_syntax_error.c  \
+	  parsing/src/expansion/process_token_expansion.c  \
 	  parsing/src/utils/create_key_value.c  \
 	  parsing/src/utils/tokenizing.c  \
 	  parsing/src/utils/token_utils.c  \
-	  parsing/src/utils/return_token_type.c \
-	  parsing/src/utils/new_t_string.c \
-	  parsing/src/utils/tokanize_word.c \
-	  parsing/src/utils/create_word_token.c \
-	  parsing/src/utils/handle_delimiters.c \
-	  parsing/src/utils/set_struct_defaults.c \
-	  parsing/src/utils/create_token_node.c \
-	  parsing/src/libft/ft_memcpy.c \
-	  parsing/src/libft/is_delimiter.c
+	  parsing/src/utils/new_t_string.c
 
 OBJ = $(SRC:.c=.o)
 

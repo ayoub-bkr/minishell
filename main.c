@@ -61,8 +61,8 @@ void	minishell_main(t_command **command, t_env **env_vars, t_list **head)
 		executing(command, env_vars);
 	if (*command)
 		cmd_freeing(command);
-	if (*head)
-		free_token_list(head);
+	//if (*head)
+	//	free_token_list(head);
 	*head = NULL;
 }
 
@@ -83,7 +83,11 @@ int	main(int ac, char **av, char **envp)
 	signal(SIGQUIT, SIG_IGN);
 	while (1)
 	{
-		init(&head, env_vars);
+		if (!init(&head, env_vars))
+		{
+			head = NULL;
+			continue ;
+		}
 		parsing(&command, head);
 		heredoc_init(command);
 		if (!command)

@@ -210,3 +210,10 @@ void print_list(t_list *head);
 void print_command(t_command *head);
 // expansion
 void process_token_expansion(Token *token, t_env *env_vars);
+void string_append_char(t_string *str, char c);
+char *get_env_value(char *var_name, t_env *env_vars);
+void string_append_str(t_string *dest, char *src);
+t_string *string_init(int initial_cap);
+void process_token_expansion(Token *token, t_env *env_vars);
+// token syntax error
+int quote_syntax_error(t_list *head);

@@ -1,14 +1,28 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   create_key_value.c                                 :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mohel-mo <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/27 03:37:49 by mohel-mo          #+#    #+#             */
+/*   Updated: 2025/08/27 03:37:50 by mohel-mo         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../../minishell.h"
 
-void create_key_value(t_env *single_var)
+void	create_key_value(t_env *single_var)
 {
 	single_var->key = get_key(single_var->var);
 	single_var->value = get_value(single_var->var);
 }
 
-void create_key_value_pairs(t_env *env_vars)
+void	create_key_value_pairs(t_env *env_vars)
 {
-	t_env *cur = env_vars;
+	t_env	*cur;
+
+	cur = env_vars;
 	while (cur)
 	{
 		create_key_value(cur);
@@ -16,13 +30,15 @@ void create_key_value_pairs(t_env *env_vars)
 	}
 }
 
-char *get_key(char *s)
+char	*get_key(char *s)
 {
-	int i = 0;
+	int		i;
+	char	*tmp;
+
+	i = 0;
 	while (s[i] && s[i] != '=')
 		i++;
-	// char *tmp = gc_calloc(sizeof(char) * (i + 1));
-	char *tmp = gc_calloc(i + 1);
+	tmp = gc_calloc(i + 1);
 	if (!tmp)
 		return (NULL);
 	i = 0;
@@ -35,18 +51,22 @@ char *get_key(char *s)
 	return (tmp);
 }
 
-char *get_value(char *s)
+char	*get_value(char *s)
 {
-	int i = 0;
-	int start = 0;
-	int len = 0;
+	int		i;
+	int		start;
+	int		len;
+	char	*tmp;
+
+	i = 0;
+	start = 0;
+	len = 0;
 	while (s[i] && s[i] != '=')
 		i++;
 	start = ++i;
 	while (s[len + start])
 		len++;
-	// char *tmp = gc_calloc(sizeof(char) * (len + 1));
-    char *tmp = gc_calloc(len + 1);
+	tmp = gc_calloc(len + 1);
 	if (!tmp)
 		return (NULL);
 	i = 0;

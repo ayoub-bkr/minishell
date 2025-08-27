@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parsing.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mohel-mo <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/27 02:21:50 by mohel-mo          #+#    #+#             */
+/*   Updated: 2025/08/27 02:21:52 by mohel-mo         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../minishell.h"
 
 void	cmd_lstaddback(t_command **head, t_command *new)
@@ -104,8 +116,12 @@ void parsing(t_command **command, t_list *head)
 		}
 		else if (cur->token->type == T_RED_IN)
 		{
-			cur = cur->next;
-			redir_addback(&cmd->redir, redir_new(ft_strdup(cur->token->str), 0));
+			printf("we got here\n");
+			if (cur->next)
+				cur = cur->next;
+			if (!cur->token->str)
+				printf("this is waq\n");
+			redir_addback(&cmd->redir, redir_new(ft_strdup("<"), 0));
 		}
 		else if (cur->token->type == T_RED_OUT)
 		{

@@ -1,6 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   new_t_string.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mohel-mo <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/27 03:36:53 by mohel-mo          #+#    #+#             */
+/*   Updated: 2025/08/27 03:36:54 by mohel-mo         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../../minishell.h"
 
-t_string *ft_newstr(char *s)
+t_string	*ft_newstr(char *s)
 {
 	t_string	*new;
 	int			len;
@@ -21,4 +33,3 @@ t_string *ft_newstr(char *s)
 	new->len = len;
 	return (new);
 }
-
