@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   minishell.h                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: aboukent <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/27 20:14:32 by aboukent          #+#    #+#             */
+/*   Updated: 2025/08/27 20:14:33 by aboukent         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <errno.h>
 #include <fcntl.h>
 #include <limits.h>
@@ -90,12 +102,12 @@ typedef struct string
 
 typedef struct s_expand_context
 {
-    char    *original;
-    int     *i;
-    char    current_quote;
-    t_string *result;
-    t_env   *env_vars;
-} t_expand_context;
+	char				*original;
+	int					*i;
+	char				current_quote;
+	t_string			*result;
+	t_env				*env_vars;
+}						t_expand_context;
 
 //------------------- execution -------------------
 
