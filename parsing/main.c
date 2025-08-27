@@ -136,7 +136,7 @@ int init(t_list **head, t_env *env_vars)
 		rl_clear_history();
 		write(1, "exit\n", 5);
 		// gc_calloc(-1);
-		exiting(0);
+		exiting(g_exit_status);
 	}
 	else
 		add_history(input);

@@ -96,13 +96,13 @@ void		expo_handler(t_command **command, t_env **env_vars);
 void		bi_pwd();
 void		bi_exit(char **args);
 void		bi_echo(char **args);
-void		bi_handler(t_command **command, t_env **env_vars);
+int		bi_handler(t_command **command, t_env **env_vars);
 int			bi_checker(char *command);
 
 //extern_cmd.c
 void		exiting(int	status);
 char		*get_path(t_env *env_vars, char *cmd);
-void		ext_handler(t_command *command, t_env *env_vars);
+int		ext_handler(t_command *command, t_env *env_vars);
 
 //heredoc.c
 void		heredoc(t_redir *redir);

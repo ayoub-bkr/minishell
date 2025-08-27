@@ -16,6 +16,7 @@ void	cmd_freeing(t_command **command)
 	t_command	*tmp;
 	int			i;
 
+	(void) i;
 	while (*command)
 	{
 		tmp = (*command)->next;
@@ -33,6 +34,7 @@ void	executing(t_command **command, t_env **env_vars)
 {
 	int	saved_stdin;
 	int	saved_stdout;
+	int	status;
 
 	saved_stdin = dup(STDIN_FILENO);
 	saved_stdout = dup(STDOUT_FILENO);
@@ -40,10 +42,11 @@ void	executing(t_command **command, t_env **env_vars)
 	{
 		if ((*command)->redir)
 			redirecting((*command)->redir);
-		bi_handler(command, env_vars);
+		status = bi_handler(command, env_vars);
 	}
 	else
-		ext_handler(*command, *env_vars);
+		status = ext_handler(*command, *env_vars);
+	g_exit_status = status;
 	dup2(saved_stdin, STDIN_FILENO);
 	dup2(saved_stdout, STDOUT_FILENO);
 	close(saved_stdin);
@@ -87,5 +90,5 @@ int	main(int ac, char **av, char **envp)
 			continue ;
 		minishell_main(&command, &env_vars, &head);
 	}
-	return (0);
+	return (g_exit_status);
 }

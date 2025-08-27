@@ -10,12 +10,12 @@ SRC = main.c gc.c\
 	execution/utils_1.c \
 	execution/utils_2.c \
 	execution/utils_3.c \
-	execution/utils_4.c \
 	parsing/src/parsing.c  \
 	parsing/main.c \
 	  parsing/src/expansion/mark_quotes.c  \
 	  parsing/src/ad_print.c  \
 	  parsing/src/printing.c  \
+	  parsing/src/utils/create_key_value.c  \
 	  parsing/src/utils/tokenizing.c  \
 	  parsing/src/utils/token_utils.c  \
 	  parsing/src/utils/return_token_type.c \
