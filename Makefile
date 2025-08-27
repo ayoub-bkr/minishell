@@ -10,21 +10,21 @@ SRC = main.c gc.c\
 	execution/utils_1.c \
 	execution/utils_2.c \
 	execution/utils_3.c \
-	parsing/src/parsing.c  \
-	parsing/main.c \
+	parsing/init.c \
+	parsing/parsing.c \
+	parsing/pars_redirection.c \
+	  parsing/src/expansion/expansion_handle.c  \
 	  parsing/src/expansion/mark_quotes.c  \
 	  parsing/src/expansion/quote_syntax_error.c  \
-	  parsing/src/expansion/process_token_expansion.c  \
+	  parsing/src/expansion/token_expansion.c  \
 	  parsing/src/utils/create_key_value.c  \
-	  parsing/src/utils/tokenizing.c  \
 	  parsing/src/utils/token_utils.c  \
-	  parsing/src/utils/new_t_string.c
+	  parsing/src/utils/tokenizing.c
 
 OBJ = $(SRC:.c=.o)
 
 NAME = minishell
-FLAGS = -g3 -Wall -Werror -Wextra
-FLAGS += -fsigned-char
+FLAGS = -Wall -Werror -Wextra
 CC = cc
 
 $(NAME): $(OBJ)

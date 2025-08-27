@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-int	g_exit_status = 0;
+int		g_exit_status = 0;
 
 void	ctrl_c(int s)
 {
@@ -9,25 +9,6 @@ void	ctrl_c(int s)
 	rl_on_new_line();
 	rl_replace_line("", 0);
 	rl_redisplay();
-}
-
-void	cmd_freeing(t_command **command)
-{
-	t_command	*tmp;
-	int			i;
-
-	(void) i;
-	while (*command)
-	{
-		tmp = (*command)->next;
-		i = 0;
-		// while ((*command)->args[i])
-		// 	free((*command)->args[i++]);
-		// free((*command)->args);
-		// free(*command);
-		*command = tmp;
-	}
-	*command = NULL;
 }
 
 void	executing(t_command **command, t_env **env_vars)
@@ -59,11 +40,21 @@ void	minishell_main(t_command **command, t_env **env_vars, t_list **head)
 		piping(*command, env_vars);
 	else
 		executing(command, env_vars);
-	if (*command)
-		cmd_freeing(command);
-	//if (*head)
-	//	free_token_list(head);
+	*command = NULL;
 	*head = NULL;
+}
+
+void	anti_norm(t_command **command, t_env **env_vars, t_list **head,
+		char **envp)
+{
+	*env_vars = NULL;
+	*command = NULL;
+	*head = NULL;
+	signal(SIGINT, ctrl_c);
+	signal(SIGQUIT, SIG_IGN);
+	create_key_value_pairs(*env_vars);
+	while (*envp)
+		env_lstaddback(env_vars, *envp++);
 }
 
 int	main(int ac, char **av, char **envp)
@@ -71,18 +62,14 @@ int	main(int ac, char **av, char **envp)
 	t_env		*env_vars;
 	t_command	*command;
 	t_list		*head;
+
 	if (ac != 1 && av[1])
 		return (0);
-	env_vars = NULL;
-	command = NULL;
-	head = NULL;
-	while (*envp)
-		env_lstaddback(&env_vars, *envp++);
-	create_key_value_pairs(env_vars);
-	signal(SIGINT, ctrl_c);
-	signal(SIGQUIT, SIG_IGN);
+	anti_norm(&command, &env_vars, &head, envp);
 	while (1)
 	{
+		head = NULL;
+		command = NULL;
 		if (!init(&head, env_vars))
 		{
 			head = NULL;

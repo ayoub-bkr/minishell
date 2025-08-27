@@ -1,23 +1,11 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   tokenizing.c                                       :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mohel-mo <marvin@42.fr>                    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/27 03:29:30 by mohel-mo          #+#    #+#             */
-/*   Updated: 2025/08/27 03:29:31 by mohel-mo         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "../../../minishell.h"
 
-void	add_token(t_list **head, char *str, TokenType type)
+void	add_token(t_list **head, char *str, t_token_type type)
 {
 	t_list	*node;
 
 	node = gc_calloc(sizeof(t_list));
-	node->token = gc_calloc(sizeof(Token));
+	node->token = gc_calloc(sizeof(t_token));
 	node->token->type = type;
 	node->token->str = str;
 	node->next = NULL;
@@ -67,7 +55,7 @@ bool	tokenize_metachar(char **str, t_list **head)
 	if ((*str)[0] == '>' && (*str)[1] == '>')
 		return (*str += 2, add_token(head, NULL, T_APPEND), true);
 	if ((*str)[0] == '<' && (*str)[1] == '<')
-		return (*str += 2, add_token(head, NULL, T_HEREDOC), true);
+		return (*str += 2, add_token(head, NULL, T_HEREDC), true);
 	if ((*str)[0] == '>')
 		return ((*str)++, add_token(head, NULL, T_RED_OUT), true);
 	if ((*str)[0] == '<')
