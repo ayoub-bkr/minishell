@@ -202,9 +202,10 @@ t_string				*string_init(int initial_cap);
 void					process_token_expansion(t_token *token,
 							t_env *env_vars);
 int						quote_syntax_error(t_list *head);
-void					handle_redirection(t_list **cur, t_command *cmd, int type);
+void					handle_redirection(t_list **cur, t_command *cmd,
+							int type);
 void					string_append_char(t_string *str, char c);
 void					handle_quote(char quote, char *current_quote);
-void					handle_dollar_sign(char *original, int *i, char current_quote,
-							t_string *result, t_env *env_vars);
-
+void					handle_dollar_sign(char *original, int *i,
+							char current_quote, t_string *result,
+							t_env *env_vars);
