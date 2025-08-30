@@ -27,8 +27,7 @@ SRC = main.c gc.c\
 OBJ = $(SRC:.c=.o)
 
 NAME = minishell
-FLAGS = -Wall -Werror -Wextra -g #-g3 -fsanitize=address 
-CC = cc
+FLAGS = -Wall -Werror -Wextra
 
 $(NAME): $(OBJ)
 	$(CC) $(FLAGS) $(OBJ) -o $(NAME) -lreadline
