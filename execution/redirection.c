@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirection.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aboukent <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: aboukent <aboukent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/30 15:44:33 by aboukent          #+#    #+#             */
-/*   Updated: 2025/08/30 15:44:34 by aboukent         ###   ########.fr       */
+/*   Updated: 2025/08/30 16:01:34 by aboukent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@ void	red_input(t_redir *redir)
 {
 	int	fd;
 
+	if (!redir->file)
+		exiting(1);
 	fd = open(redir->file, O_RDONLY);
 	if (fd < 0)
 	{
@@ -35,6 +37,8 @@ void	red_output(t_redir *redir)
 {
 	int	fd;
 
+	if (!redir->file)
+		exiting(1);
 	fd = open(redir->file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (fd < 0)
 	{
@@ -54,6 +58,8 @@ void	red_append(t_redir *redir)
 {
 	int	fd;
 
+	if (!redir->file)
+		exiting(1);
 	fd = open(redir->file, O_WRONLY | O_CREAT | O_APPEND, 0644);
 	if (fd < 0)
 	{
