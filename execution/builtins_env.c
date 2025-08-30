@@ -19,12 +19,13 @@ void	env_printing(t_env *env_vars, int expo)
 	tmp = env_vars;
 	while (tmp)
 	{
-		if (expo_equal(tmp->var))
+		if (expo)
 		{
-			if (expo)
-				ft_putstr("declare -x ", 0);
+			ft_putstr("declare -x ", 0);
 			ft_putstr(tmp->var, 1);
 		}
+		else if (expo_equal(tmp->var))
+			ft_putstr(tmp->var, 1);
 		tmp = tmp->next;
 	}
 }
@@ -32,24 +33,24 @@ void	env_printing(t_env *env_vars, int expo)
 void	env_lstremove(t_env **head, char **cmds)
 {
 	t_env	*tmp;
-	t_env	*to_free;
+	// t_env	*to_free;
 
 	while (*cmds)
 	{
 		tmp = *head;
 		if (ft_strcmp(tmp->var, *cmds))
 		{
-			to_free = tmp;
+			// to_free = tmp;
 			*head = tmp->next;
-			free(to_free);
+			// free(to_free);
 		}
 		while (tmp->next)
 		{
 			if (ft_strcmp(tmp->next->var, *cmds) == 2)
 			{
-				to_free = tmp->next;
+				// to_free = tmp->next;
 				tmp->next = tmp->next->next;
-				free(to_free);
+				// free(to_free);
 			}
 			else
 				tmp = tmp->next;

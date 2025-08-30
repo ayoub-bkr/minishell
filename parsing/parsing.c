@@ -19,9 +19,13 @@ void	tokenize(char *str, t_list **head)
 		while (*str == ' ' || *str == '\t')
 			str++;
 		if (tokenize_word(&str, head))
+		{
 			;
+		}
 		else if (tokenize_metachar(&str, head))
+		{
 			;
+		}
 	}
 }
 

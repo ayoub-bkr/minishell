@@ -104,8 +104,7 @@ void	expo_handler(t_command **command, t_env **env_vars)
 	i = 1;
 	while ((*command)->args[i])
 	{
-		if (!expo_equal((*command)->args[i])
-			|| !expo_valid_id((*command)->args[i]))
+		if (!expo_valid_id((*command)->args[i]))
 		{
 			printf("'%s': not a valid identifier\n", (*command)->args[i]);
 			g_exit_status = 1;

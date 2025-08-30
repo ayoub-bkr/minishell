@@ -31,10 +31,10 @@ void	executing(t_command **command, t_env **env_vars)
 
 	saved_stdin = dup(STDIN_FILENO);
 	saved_stdout = dup(STDOUT_FILENO);
+	if ((*command)->redir)
+		redirecting((*command)->redir);
 	if (bi_checker((*command)->args[0]))
 	{
-		if ((*command)->redir)
-			redirecting((*command)->redir);
 		status = bi_handler(command, env_vars);
 	}
 	else

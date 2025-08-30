@@ -35,6 +35,10 @@ void	bi_exit(char **args)
 	fprintf(stdout, "exit\n");
 	if (args[1])
 	{
+		if (!args[1][0])
+		{
+			exiting(2);
+		}
 		if (!ft_isdigit(args[1]))
 		{
 			fprintf(stderr, "exit: %s: numeric argument required\n", args[1]);
