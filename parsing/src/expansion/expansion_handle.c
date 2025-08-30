@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   expansion_handle.c                                 :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mohel-mo <marvin@42.fr>                    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/27 18:30:24 by mohel-mo          #+#    #+#             */
-/*   Updated: 2025/08/27 18:30:25 by mohel-mo         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "../../../minishell.h"
 
 void	handle_quote(char quote, char *current_quote)
@@ -18,6 +6,7 @@ void	handle_quote(char quote, char *current_quote)
 		*current_quote = quote;
 	else if (*current_quote == quote)
 		*current_quote = 0;
+	has_quote(1, 1);
 }
 
 void	handle_exit_status(t_string *result)

@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   redirection.c                                      :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: aboukent <marvin@42.fr>                    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/24 19:31:25 by aboukent          #+#    #+#             */
-/*   Updated: 2025/08/24 19:31:26 by aboukent         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "../minishell.h"
 
 void	red_input(t_redir *redir)
@@ -87,7 +75,6 @@ void	redirecting(t_redir *redir)
 				perror("dup2");
 				exiting(1);
 			}
-			close(redir->heredoc_fd);
 		}
 		redir = redir->next;
 	}

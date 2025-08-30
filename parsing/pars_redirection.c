@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   pars_redirection.c                                 :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mohel-mo <marvin@42.fr>                    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/27 18:27:54 by mohel-mo          #+#    #+#             */
-/*   Updated: 2025/08/27 18:27:55 by mohel-mo         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "../minishell.h"
 
 void	cmd_lstaddback(t_command **head, t_command *new)
@@ -65,7 +53,7 @@ void	handle_redirection(t_list **cur, t_command *cmd, int type)
 	if ((*cur)->next)
 		*cur = (*cur)->next;
 	if (type == T_RED_IN)
-		redir_addback(&cmd->redir, redir_new(ft_strdup("<"), 0));
+		redir_addback(&cmd->redir, redir_new(ft_strdup((*cur)->token->str), 0));
 	else if (type == T_RED_OUT)
 		redir_addback(&cmd->redir, redir_new(ft_strdup((*cur)->token->str), 1));
 	else if (type == T_APPEND)

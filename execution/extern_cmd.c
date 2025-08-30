@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   extern_cmd.c                                       :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: aboukent <marvin@42.fr>                    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/27 20:13:33 by aboukent          #+#    #+#             */
-/*   Updated: 2025/08/27 20:13:35 by aboukent         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "../minishell.h"
 
 void	exiting(int status)
@@ -47,6 +35,14 @@ char	*get_path(t_env *env_vars, char *cmd)
 	return (NULL);
 }
 
+void	handel_redr(t_command *command)
+{
+	if (command->redir)
+		redirecting(command->redir);
+	if (command->args[0] == NULL)
+		exiting(0);
+}
+
 void	ext_child(t_command *command, t_env *env_vars)
 {
 	char	**new_envp;
@@ -54,13 +50,15 @@ void	ext_child(t_command *command, t_env *env_vars)
 
 	path = NULL;
 	new_envp = NULL;
+	handel_redr(command);
 	if (ft_strchr(command->args[0], '/'))
 		path = command->args[0];
 	else
 		path = get_path(env_vars, command->args[0]);
 	if (!path)
 	{
-		fprintf(stderr, "%s: command not found\n", command->args[0]);
+		ft_putstrs_fd((char *[]){command->args[0],
+			": command not found", 0}, 1, 2);
 		exiting(127);
 	}
 	if (command->redir)
@@ -68,7 +66,8 @@ void	ext_child(t_command *command, t_env *env_vars)
 	new_envp = env_filling(env_vars);
 	if (execve(path, command->args, new_envp) == -1)
 	{
-		fprintf(stderr, "%s: command not found\n", command->args[0]);
+		ft_putstrs_fd((char *[]){command->args[0],
+			": command not found", 0}, 1, 2);
 		exiting(127);
 	}
 }

@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   pipeline.c                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: seraph <seraph@student.42.fr>              +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/24 19:31:15 by aboukent          #+#    #+#             */
-/*   Updated: 2025/08/27 00:32:58 by seraph           ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "../minishell.h"
 
 void	pipe_ext_handler(t_command *command, t_env *env_vars)
@@ -19,7 +7,7 @@ void	pipe_ext_handler(t_command *command, t_env *env_vars)
 
 	if (!command || !command->args || !command->args[0])
 	{
-		fprintf(stderr, "Invalid command\n");
+		ft_putstr_fd("Invalid command", 1, 2);
 		exiting(1);
 	}
 	if (ft_strchr(command->args[0], '/'))
@@ -28,13 +16,15 @@ void	pipe_ext_handler(t_command *command, t_env *env_vars)
 		path = get_path(env_vars, command->args[0]);
 	if (!path)
 	{
-		fprintf(stderr, "%s: command not found\n", command->args[0]);
+		ft_putstrs_fd((char *[]){command->args[0],
+			": command not found", 0}, 1, 2);
 		exiting(1);
 	}
 	new_envp = env_filling(env_vars);
 	if (execve(path, command->args, new_envp) == -1)
 	{
-		fprintf(stderr, "%s: command not found\n", command->args[0]);
+		ft_putstrs_fd((char *[]){command->args[0],
+			": command not found", 0}, 1, 2);
 		exiting(1);
 	}
 }

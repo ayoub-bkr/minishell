@@ -1,16 +1,18 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   utils_1.c                                          :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: aboukent <marvin@42.fr>                    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/24 19:31:34 by aboukent          #+#    #+#             */
-/*   Updated: 2025/08/24 19:31:36 by aboukent         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "../minishell.h"
+
+int	ft_isdigit(char *str)
+{
+	int	i;
+
+	i = 0;
+	while (str[i])
+	{
+		if (str[i] < '0' || str[i] > '9')
+			return (0);
+		i++;
+	}
+	return (1);
+}
 
 int	ft_strcmp(char *s1, char *s2)
 {
@@ -42,7 +44,7 @@ int	ft_strlen(char *str)
 	int	i;
 
 	i = 0;
-	while (str[i])
+	while (str && str[i])
 		i++;
 	return (i);
 }
@@ -52,6 +54,8 @@ char	*ft_strdup(char *s)
 	int		i;
 	char	*m;
 
+	if (!s)
+		return (NULL);
 	i = 0;
 	m = gc_calloc(ft_strlen(s) + 1);
 	if (!m)
@@ -70,7 +74,7 @@ int	ft_strchr(char *str, char c)
 	int	i;
 
 	i = 0;
-	while (str[i])
+	while (str && str[i])
 	{
 		if (str[i] == c)
 			return (1);

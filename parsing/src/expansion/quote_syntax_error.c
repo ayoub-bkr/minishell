@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   quote_syntax_error.c                               :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mohel-mo <marvin@42.fr>                    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/27 18:31:23 by mohel-mo          #+#    #+#             */
-/*   Updated: 2025/08/27 18:31:24 by mohel-mo         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "../../../minishell.h"
 
 int	check_quotes_in_str(char *str)
@@ -29,7 +17,7 @@ int	check_quotes_in_str(char *str)
 	}
 	if (in_quote)
 	{
-		printf("[+] syntax error\n{-} unclosed quote\n");
+		ft_putstr_fd("[+] syntax error\n{-} unclosed quote", 1, 2);
 		return (0);
 	}
 	return (1);

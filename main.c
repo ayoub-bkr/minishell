@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: aboukent <marvin@42.fr>                    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/27 20:14:04 by aboukent          #+#    #+#             */
-/*   Updated: 2025/08/27 20:14:06 by aboukent         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "minishell.h"
 
 int		g_exit_status = 0;
@@ -31,10 +19,9 @@ void	executing(t_command **command, t_env **env_vars)
 
 	saved_stdin = dup(STDIN_FILENO);
 	saved_stdout = dup(STDOUT_FILENO);
-	if ((*command)->redir)
-		redirecting((*command)->redir);
 	if (bi_checker((*command)->args[0]))
 	{
+		redirecting((*command)->redir);
 		status = bi_handler(command, env_vars);
 	}
 	else
@@ -78,6 +65,7 @@ int	main(int ac, char **av, char **envp)
 	if (ac != 1 && av[1])
 		return (0);
 	anti_norm(&command, &env_vars, &head, envp);
+	env(1, env_vars);
 	while (1)
 	{
 		head = NULL;
@@ -89,7 +77,7 @@ int	main(int ac, char **av, char **envp)
 		}
 		parsing(&command, head);
 		heredoc_init(command);
-		if (!command)
+		if (!command || is_heredoc_sig_int(0, 0))
 			continue ;
 		minishell_main(&command, &env_vars, &head);
 	}

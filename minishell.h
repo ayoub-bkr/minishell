@@ -1,23 +1,11 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: aboukent <marvin@42.fr>                    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/27 20:14:32 by aboukent          #+#    #+#             */
-/*   Updated: 2025/08/27 20:14:33 by aboukent         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include <errno.h>
 #include <fcntl.h>
 #include <limits.h>
+#include <stdio.h>
 #include <readline/history.h>
 #include <readline/readline.h>
 #include <signal.h>
 #include <stdbool.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/wait.h>
@@ -112,6 +100,8 @@ typedef struct s_expand_context
 //------------------- execution -------------------
 
 // builtins_cd.c
+t_env					*env(int set, t_env *value);
+bool					is_heredoc_sig_int(int set, bool val);
 int						expo_valid_id(char *input);
 char					*bi_cd_home(t_env *env_vars, char *str);
 void					bi_cd(char **args, t_env *env_vars);
@@ -141,11 +131,15 @@ int						bi_checker(char *command);
 // extern_cmd.c
 void					exiting(int status);
 char					*get_path(t_env *env_vars, char *cmd);
+void					handel_redr(t_command *command);
 void					ext_child(t_command *command, t_env *env_vars);
 int						ext_handler(t_command *command, t_env *env_vars);
 
 // heredoc.c
-void					heredoc(t_redir *redir);
+void					exit_her_doc(int signo);
+void					heredoc(t_redir *redir, int i);
+void					heredoc_child(t_redir *redir, int fd[2], int i);
+void					heredoc_parent(int pid);
 void					heredoc_init(t_command *command);
 
 // pipeline.c
@@ -164,6 +158,7 @@ void					red_append(t_redir *redir);
 void					redirecting(t_redir *redir);
 
 // utils_1.c
+int						ft_isdigit(char *str);
 int						ft_strcmp(char *s1, char *s2);
 int						ft_strlen(char *str);
 char					*ft_strdup(char *s);
@@ -177,10 +172,11 @@ char					**split_freeing(char **m, int i);
 char					**ft_split(char *s, char c);
 
 // utils_3.c
-int						ft_isdigit(char *str);
 int						ft_isalpha(int c);
 void					ft_putstr(char *str, int nl);
 void					ft_putstrs(char **strs, int nl);
+void					ft_putstr_fd(char *str, int nl, int fd);
+void					ft_putstrs_fd(char *strs[], int nl, int fd);
 
 // gc.c
 void					ft_bzero(void *s, size_t n);
@@ -228,3 +224,13 @@ void					handle_redirection(t_list **cur, t_command *cmd,
 void					string_append_char(t_string *str, char c);
 void					handle_quote(char quote, char *current_quote);
 void					handle_dollar_sign(t_expand_context *ctx);
+bool					is_heredoc(t_token_type type, int set);
+bool					has_quote(int set, bool value);
+int						syntax_error(t_list *head);
+int						redir_syntax_error(t_list *head);
+char					*expend_heredoc(char *line);
+t_env					*env(int set, t_env *value);
+bool					should_expand_heredoc(int set, bool value, int i);
+void					expand_all_word_tokens_2(t_list *cur,
+							t_list **token_list, t_list *prev);
+int						is_valid_var_name_char(char ch);

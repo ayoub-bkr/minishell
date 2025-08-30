@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   parsing.c                                          :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mohel-mo <marvin@42.fr>                    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/27 18:27:31 by mohel-mo          #+#    #+#             */
-/*   Updated: 2025/08/27 18:27:35 by mohel-mo         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "../minishell.h"
 
 void	tokenize(char *str, t_list **head)
@@ -19,13 +7,9 @@ void	tokenize(char *str, t_list **head)
 		while (*str == ' ' || *str == '\t')
 			str++;
 		if (tokenize_word(&str, head))
-		{
-			;
-		}
+			str = str;
 		else if (tokenize_metachar(&str, head))
-		{
-			;
-		}
+			str = str;
 	}
 }
 

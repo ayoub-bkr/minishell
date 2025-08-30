@@ -1,22 +1,30 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   builtins_cd.c                                      :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: aboukent <marvin@42.fr>                    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/25 10:34:14 by aboukent          #+#    #+#             */
-/*   Updated: 2025/08/25 10:34:15 by aboukent         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "../minishell.h"
+
+t_env	*env(int set, t_env *value)
+{
+	static t_env	*val;
+
+	if (set)
+		val = value;
+	return (val);
+}
+
+bool	is_heredoc_sig_int(int set, bool val)
+{
+	static bool	value;
+
+	if (set)
+		value = val;
+	return (value);
+}
 
 int	expo_valid_id(char *input)
 {
 	int	i;
 
 	i = 0;
+	if (input[i] == '=')
+		return (0);
 	while (input[i] && input[i] != '=')
 	{
 		if (ft_isalpha(input[i]) || input[i] == '_'
@@ -53,13 +61,14 @@ char	*bi_cd_home(t_env *env_vars, char *str)
 void	bi_cd(char **args, t_env *env_vars)
 {
 	char	*dir;
+	char	**strs;
 
 	if (!args[1])
 	{
 		dir = bi_cd_home(env_vars, "HOME");
 		if (!dir)
 		{
-			fprintf(stderr, "cd: HOME not set\n");
+			ft_putstr_fd("cd: HOME not set\n", 0, 2);
 			g_exit_status = 1;
 			return ;
 		}
@@ -68,7 +77,8 @@ void	bi_cd(char **args, t_env *env_vars)
 		dir = args[1];
 	if (chdir(dir) == -1)
 	{
-		fprintf(stderr, "cd: %s: %s\n", dir, strerror(errno));
+		strs = (char *[]){"cd: ", dir, ": ", strerror(errno), 0};
+		ft_putstrs_fd(strs, 1, 2);
 		g_exit_status = 1;
 		return ;
 	}

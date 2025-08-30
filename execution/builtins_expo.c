@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   builtins_expo.c                                    :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: seraph <seraph@student.42.fr>              +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/24 19:30:33 by aboukent          #+#    #+#             */
-/*   Updated: 2025/08/26 23:50:45 by seraph           ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "../minishell.h"
 
 int	expo_equal(char *input)
@@ -68,10 +56,7 @@ void	expo_lstedit(char *input, t_env **env_vars)
 		}
 		if (input[i] == '=' && tmp->var[i] == '=')
 		{
-			free(tmp->var);
 			tmp->var = ft_strdup(input);
-			free(tmp->key);
-			free(tmp->value);
 			tmp->key = get_key(input);
 			tmp->value = get_value(input);
 			return ;
@@ -106,7 +91,8 @@ void	expo_handler(t_command **command, t_env **env_vars)
 	{
 		if (!expo_valid_id((*command)->args[i]))
 		{
-			printf("'%s': not a valid identifier\n", (*command)->args[i]);
+			ft_putstrs_fd((char *[]){"'", (*command)->args[i],
+				"'", ": not a valid identifier", 0}, 1, 2);
 			g_exit_status = 1;
 			i++;
 			continue ;

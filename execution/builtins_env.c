@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   builtins_env.c                                     :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: seraph <seraph@student.42.fr>              +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/24 19:30:10 by aboukent          #+#    #+#             */
-/*   Updated: 2025/08/26 23:50:45 by seraph           ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "../minishell.h"
 
 void	env_printing(t_env *env_vars, int expo)
@@ -33,25 +21,18 @@ void	env_printing(t_env *env_vars, int expo)
 void	env_lstremove(t_env **head, char **cmds)
 {
 	t_env	*tmp;
-	// t_env	*to_free;
 
+	if (*head == NULL)
+		return ;
 	while (*cmds)
 	{
 		tmp = *head;
 		if (ft_strcmp(tmp->var, *cmds))
-		{
-			// to_free = tmp;
 			*head = tmp->next;
-			// free(to_free);
-		}
 		while (tmp->next)
 		{
 			if (ft_strcmp(tmp->next->var, *cmds) == 2)
-			{
-				// to_free = tmp->next;
 				tmp->next = tmp->next->next;
-				// free(to_free);
-			}
 			else
 				tmp = tmp->next;
 		}

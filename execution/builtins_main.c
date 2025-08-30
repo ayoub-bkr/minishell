@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   builtins_main.c                                    :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: seraph <seraph@student.42.fr>              +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/24 19:30:45 by aboukent          #+#    #+#             */
-/*   Updated: 2025/08/27 00:32:58 by seraph           ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "../minishell.h"
 
 void	bi_pwd(void)
@@ -32,23 +20,23 @@ void	bi_exit(char **args)
 {
 	int	status;
 
-	fprintf(stdout, "exit\n");
 	if (args[1])
 	{
 		if (!args[1][0])
 		{
+			ft_putstr_fd("exit: : numeric argument required", 1, 2);
 			exiting(2);
 		}
-		if (!ft_isdigit(args[1]))
+		if (!ft_isdigit(args[1]) && !((args[1][0] == '+' || args[1][0] != '-')
+			&& ft_isdigit(&(args[1][1]))))
 		{
-			fprintf(stderr, "exit: %s: numeric argument required\n", args[1]);
+			ft_putstr_fd("exit: : numeric argument required", 1, 2);
 			exiting(2);
 		}
 		if (args[2])
 		{
-			fprintf(stderr, "exit: too many arguments\n");
-			g_exit_status = 1;
-			return ;
+			ft_putstr_fd("exit: too many arguments", 1, 2);
+			exiting(1);
 		}
 		status = atoi(args[1]);
 	}
